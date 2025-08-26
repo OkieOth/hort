@@ -1,0 +1,15 @@
+package {{ .PackageName }}
+
+{{- range $index, $type := .ParsedSchema.IntEnums -}}
+{{ end }}
+
+{{- range $index, $type := .ParsedSchema.StringEnums -}}
+{{ end }}
+
+{{- range $index, $type := .ParsedSchema.ComplexTypes -}}
+type {{ .Name }} struct {
+{{- range .Properties }}
+	{{ .Name }} {{ .ValueType.Name }}
+{{- end }}
+}
+{{ end }}
