@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewParseResult(t *testing.T) {
-	r := types.NewParseResult()
+func TestNewParsedSchema(t *testing.T) {
+	r := types.NewParsedSchema()
 	require.NotNil(t, r.ArrayTypes)
 	require.NotNil(t, r.MapTypes)
 	require.NotNil(t, r.ComplexTypes)

@@ -3,6 +3,7 @@ package golang_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,7 +13,7 @@ import (
 )
 
 func TestGenerateTypes(t *testing.T) {
-	fileToUse := "../../pkg/jsonschemaparser/_resources/tests/test_schema.json"
+	fileToUse := "../../jsonschemaparser/_resources/tests/test_schema.json"
 	bytes, err := os.ReadFile(fileToUse)
 	require.Nil(t, err)
 	parsedSchema, err := p.ParseBytes(bytes)
@@ -20,11 +21,14 @@ func TestGenerateTypes(t *testing.T) {
 		fmt.Println("error:", err)
 		panic("error while parsing test file")
 	}
-	templateBytes, err := os.ReadFile("../../pkg/codegen/resources/templates/go_types.tmpl")
+	templateBytes, err := os.ReadFile("../resources/templates/go_types.tmpl")
 	if err != nil {
 		fmt.Println("error:", err)
 		panic("error while reading template file")
 	}
-	err = c.GenerateTypes(&parsedSchema, string(templateBytes), "dummy", os.Stdout)
 
+	var stringBuilder strings.Builder
+	err = c.GenerateTypes(&parsedSchema, string(templateBytes), "dummy", &stringBuilder)
+	s := stringBuilder.String()
+	fmt.Println(s)
 }

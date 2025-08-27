@@ -1,14 +1,25 @@
 package golang
 
 import (
-	"fmt"
 	"io"
+	"text/template"
 
 	"github.com/okieoth/hort/pkg/jsonschemaparser/types"
 )
 
-func GenerateTypes(parsedSchema *types.ParseResult, template, packageName string, outputWriter io.Writer) error {
-	// TODO
-	fmt.Println("hello from codegen/golang")
+type TemplateInput struct {
+	Schema      *types.ParsedSchema
+	PackageName string
+}
+
+func GenerateTypes(parsedSchema *types.ParsedSchema, templateStr, packageName string, outputWriter io.Writer) error {
+	tmpl := template.Must(template.New("GolangTypes").Funcs(
+		template.FuncMap{}).Parse(templateStr))
+	templateInput := TemplateInput{
+		Schema:      parsedSchema,
+		PackageName: packageName,
+	}
+	tmpl.Execute(outputWriter, templateInput)
+
 	return nil
 }
