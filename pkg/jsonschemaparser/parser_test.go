@@ -21,7 +21,7 @@ func TestParseBytes(t *testing.T) {
 	require.Equal(t, 1, len(result.StringEnums), "wrong number of elements in types string enum")
 	require.Equal(t, 0, len(result.ArrayTypes))
 	require.Equal(t, 0, len(result.MapTypes))
-	require.Equal(t, 0, len(result.IntEnums))
+	require.Equal(t, 1, len(result.IntEnums))
 	require.Equal(t, 0, len(result.IntegerTypes))
 	require.Equal(t, 0, len(result.NumberTypes))
 	require.Equal(t, 0, len(result.StringTypes))
