@@ -1,0 +1,20 @@
+
+{{ range $index, $complexType := .ComplexTypes -}}
+CREATE TABLE IF NOT EXIST {{ $complexType.Name }} (
+  _id_ INTEGER PRIMARY KEY
+  {{ range $complexType.Properties }}
+    {{- if isNeitherMapNorArray .ValueType }}
+	,{{ refPrefixIfNeeded .ValueType }}{{ .Name }} {{ getColType .ValueType }}
+    {{- end }}
+  {{ end }}
+);
+
+  {{ range $indexA, $container := $complexType.ArrayTypes -}}
+CREATE TABLE IF NOT EXIST {{ $complexType.Name }}_{{ $container.PropName }} (
+  _id_ INTEGER PRIMARY KEY
+  ,{{ $complexType.Name }} INTEGER
+  ,{{ getContainerName $container.ValueType }}
+)
+  {{ end }}
+
+{{ end }}

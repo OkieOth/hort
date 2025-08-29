@@ -2,64 +2,66 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$comment": "ChatGpt provided",
   "title": "Person",
-  "type": "object",
-  "required": ["id", "name", "contact", "roles"],
-  "properties": {
-    "id": {
-      "type": "string",
-      "format": "uuid",
-      "description": "Unique identifier for the person"
-    },
-    "name": {
-      "$ref": "#/definitions/Name"
-    },
-    "age": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 150
-    },
-    "contact": {
+  "$defs": {
+    "Person": {
       "type": "object",
-      "required": ["email"],
+      "required": ["id", "name", "contact", "roles"],
       "properties": {
-        "email": {
+        "id": {
           "type": "string",
-          "format": "email"
+          "format": "uuid",
+          "description": "Unique identifier for the person"
         },
-        "phone": {
-          "type": "string",
-          "pattern": "^\\+?[1-9]\\d{1,14}$"
+        "name": {
+          "$ref": "#/$defs/Name"
         },
-        "address": {
+        "age": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 150
+        },
+        "contact": {
           "type": "object",
+          "required": ["email"],
           "properties": {
-            "street": { "type": "string" },
-            "city": { "type": "string" },
-            "postalCode": { "type": "string" },
-            "country": { "type": "string" }
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phone": {
+              "type": "string",
+              "pattern": "^\\+?[1-9]\\d{1,14}$"
+            },
+            "address": {
+              "type": "object",
+              "properties": {
+                "street": { "type": "string" },
+                "city": { "type": "string" },
+                "postalCode": { "type": "string" },
+                "country": { "type": "string" }
+              }
+            }
           }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["admin", "editor", "viewer"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
-    "roles": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": ["admin", "editor", "viewer"]
-      },
-      "minItems": 1,
-      "uniqueItems": true
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true
-    },
-    "createdAt": {
-      "type": "string",
-      "format": "date-time"
-    }
-  },
-  "definitions": {
     "Name": {
       "type": "object",
       "required": ["first", "last"],

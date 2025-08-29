@@ -27,7 +27,14 @@ func ParseBytes(input []byte) (types.ParsedSchema, error) {
 		return extractedTypes, fmt.Errorf("error while unmarshalling schema: %v", err)
 	}
 
-	if definitions, ok := parsedSchema["definitions"]; ok {
+	var definitions any
+	var found bool
+	definitions, found = parsedSchema["definitions"]
+	if !found {
+		// respects json schema draft 2020-12
+		definitions, found = parsedSchema["$defs"]
+	}
+	if found {
 		definitionsMap, ok := definitions.(map[string]any)
 		if !ok {
 			return extractedTypes, fmt.Errorf("error while converting to definitions map")
