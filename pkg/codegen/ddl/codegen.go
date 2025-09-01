@@ -122,7 +122,11 @@ func createTemplateInput(parsedSchema *types.ParsedSchema) []ComplexTypeDef {
 }
 
 func getContainerName(t any) string {
-
+	if x, ok := t.(types.ComplexType); ok {
+		return x.Name
+	} else {
+		return "value"
+	}
 }
 
 func GenerateCreateTables(parsedSchema *types.ParsedSchema, templateStr string, outputWriter io.Writer) error {
@@ -132,6 +136,7 @@ func GenerateCreateTables(parsedSchema *types.ParsedSchema, templateStr string, 
 			"isNeitherMapNorArray": isNeitherMapNorArray,
 			"getColType":           getColType,
 			"refPrefixIfNeeded":    refPrefixIfNeeded,
+			"getContainerName":     getContainerName,
 		}).Parse(templateStr))
 	templateInput := TemplateInput{
 		ComplexTypes: complexTypes,
