@@ -137,7 +137,6 @@ func resolveDummyTypesForComplexTypes(extractedTypes *types.ParsedSchema) error 
 						complexType.Name, property.Name, dummyType.Name, err)
 				}
 				complexType.Properties[i].ValueType = foundType
-				complexType.Properties[i] = property
 				wasChanged = true
 			}
 		}
@@ -199,6 +198,9 @@ func ToProperName(input string) string {
 }
 
 func parseTopLevelType(parsedSchema map[string]any, alreadyExtractedTypes *types.ParsedSchema) error {
+	if !hasToplevelType(parsedSchema) {
+		return nil
+	}
 	var typeName string
 	if titleEntry, ok := parsedSchema["title"]; ok {
 		if t, ok := titleEntry.(string); !ok {
@@ -226,6 +228,20 @@ func parseTypesFromDefinition(definitionsMap map[string]any, alreadyExtractedTyp
 		}
 	}
 	return nil
+}
+
+func hasToplevelType(valuesMap map[string]any) bool {
+	if _, ok := valuesMap["enum"]; ok {
+		// found enum entry
+		return true
+	} else if _, ok := valuesMap["$ref"]; ok {
+		// found ref entry
+		return true
+	} else if _, ok := valuesMap["type"]; ok {
+		// found type entry
+		return true
+	}
+	return false
 }
 
 func extractType(name string, valuesMap map[string]any, alreadyExtractedTypes *types.ParsedSchema, topLevel bool) (any, error) {
