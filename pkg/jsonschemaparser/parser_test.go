@@ -21,7 +21,7 @@ func TestParseBytes(t *testing.T) {
 	require.Equal(t, 1, len(result.StringEnums), "wrong number of elements in types string enum")
 	require.Equal(t, 0, len(result.ArrayTypes))
 	require.Equal(t, 0, len(result.MapTypes))
-	require.Equal(t, 0, len(result.IntEnums))
+	require.Equal(t, 1, len(result.IntEnums))
 	require.Equal(t, 0, len(result.IntegerTypes))
 	require.Equal(t, 0, len(result.NumberTypes))
 	require.Equal(t, 0, len(result.StringTypes))
@@ -235,11 +235,11 @@ func TestTopLevelBool(t *testing.T) {
 func TestTopLevelEnum(t *testing.T) {
 	tests := []struct {
 		input     string
-		checkFunc func(v types.ParseResult) bool
+		checkFunc func(v types.ParsedSchema) bool
 	}{
 		{
 			input: "_resources/tests/enum_str_1.json",
-			checkFunc: func(v types.ParseResult) bool {
+			checkFunc: func(v types.ParsedSchema) bool {
 				require.Equal(t, 1, len(v.StringEnums))
 				for _, x := range v.StringEnums {
 					assert.Equal(t, []string{"red", "green", "blue"}, x.Values)
@@ -249,7 +249,7 @@ func TestTopLevelEnum(t *testing.T) {
 		},
 		{
 			input: "_resources/tests/enum_str_2.json",
-			checkFunc: func(v types.ParseResult) bool {
+			checkFunc: func(v types.ParsedSchema) bool {
 				require.Equal(t, 1, len(v.StringEnums))
 				for _, x := range v.StringEnums {
 					assert.Equal(t, []string{"red", "green", "blue"}, x.Values)
@@ -259,7 +259,7 @@ func TestTopLevelEnum(t *testing.T) {
 		},
 		{
 			input: "_resources/tests/enum_int_1.json",
-			checkFunc: func(v types.ParseResult) bool {
+			checkFunc: func(v types.ParsedSchema) bool {
 				require.Equal(t, 1, len(v.IntEnums))
 				for _, x := range v.IntEnums {
 					assert.Equal(t, []int{13, 700, 42}, x.Values)
@@ -269,7 +269,7 @@ func TestTopLevelEnum(t *testing.T) {
 		},
 		{
 			input: "_resources/tests/enum_int_2.json",
-			checkFunc: func(v types.ParseResult) bool {
+			checkFunc: func(v types.ParsedSchema) bool {
 				require.Equal(t, 1, len(v.IntEnums))
 				for _, x := range v.IntEnums {
 					assert.Equal(t, []int{13, 700, 42}, x.Values)

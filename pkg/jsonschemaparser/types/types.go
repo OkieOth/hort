@@ -6,7 +6,7 @@ import (
 
 // This type only covers the main parsed types, that most likely need to be handled
 // in the first place.
-type ParseResult struct {
+type ParsedSchema struct {
 	ComplexTypes  map[string]ComplexType
 	ArrayTypes    map[string]ArrayType
 	MapTypes      map[string]MapType
@@ -25,8 +25,8 @@ type ParseResult struct {
 	ObjectTypes   map[string]ObjectType
 }
 
-func NewParseResult() ParseResult {
-	return ParseResult{
+func NewParsedSchema() ParsedSchema {
+	return ParsedSchema{
 		ComplexTypes:  make(map[string]ComplexType, 0),
 		ArrayTypes:    make(map[string]ArrayType, 0),
 		MapTypes:      make(map[string]MapType, 0),
