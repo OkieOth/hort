@@ -71,10 +71,28 @@ func getTypeName(propName string, t any) string {
 	}
 }
 
+func hasTimeAttribs(parsedSchema *types.ParsedSchema) bool {
+	for _, ct := range parsedSchema.ComplexTypes {
+		for _, p := range ct.Properties {
+			if _, ok := p.ValueType.(types.DateTimeType); ok {
+				return true
+			}
+			if _, ok := p.ValueType.(types.DateType); ok {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func GenerateTypes(parsedSchema *types.ParsedSchema, templateStr, packageName string, outputWriter io.Writer) error {
+	isTimeImportNeeded := func() bool {
+		return hasTimeAttribs(parsedSchema)
+	}
 	tmpl := template.Must(template.New("GolangTypes").Funcs(
 		template.FuncMap{
-			"getTypeName": getTypeName,
+			"getTypeName":        getTypeName,
+			"isTimeImportNeeded": isTimeImportNeeded,
 		}).Parse(templateStr))
 	templateInput := TemplateInput{
 		Schema:      parsedSchema,

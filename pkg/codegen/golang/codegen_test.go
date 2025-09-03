@@ -13,7 +13,7 @@ import (
 
 func TestGenerateTypes(t *testing.T) {
 	fileToUse := "../../jsonschemaparser/_resources/tests/test_schema.json"
-	outputFile := "../../../examples/temp/testgeneratedtypes.go"
+	outputFile := "../../../examples/crud/types/types.go"
 	bytes, err := os.ReadFile(fileToUse)
 	require.Nil(t, err)
 	parsedSchema, err := p.ParseBytes(bytes)
@@ -21,7 +21,7 @@ func TestGenerateTypes(t *testing.T) {
 	templateBytes, err := os.ReadFile("../resources/templates/go_types.tmpl")
 	require.Nil(t, err)
 	var stringBuilder strings.Builder
-	err = c.GenerateTypes(&parsedSchema, string(templateBytes), "dummy", &stringBuilder)
+	err = c.GenerateTypes(&parsedSchema, string(templateBytes), "types", &stringBuilder)
 	require.Nil(t, err)
 	s := stringBuilder.String()
 	file, err := os.Create(outputFile)

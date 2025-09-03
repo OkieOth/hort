@@ -1,5 +1,9 @@
 package {{ .PackageName }}
 
+{{- if isTimeImportNeeded }}
+import "time"
+{{ end -}}
+
 {{- range $index, $type := .Schema.IntEnums }}
 
 type {{ $type.Name }} int
