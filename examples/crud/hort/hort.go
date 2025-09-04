@@ -1,17 +1,41 @@
 package hort
 
-import "github.com/okieoth/hort/examples/crud/types"
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/okieoth/hort/examples/crud/types"
+	p "github.com/okieoth/hort/pkg/jsonschemaparser"
+)
 
 type Hort struct {
-	name string
+	name       string
+	dbFileName string
+	db         *sql.DB
 }
 
-func (h *Hort) Open(hortName string) error {
+func NewHort(hortName string) *Hort {
+	return &Hort{
+		name: hortName,
+	}
+}
+
+func (h *Hort) Open() error {
+	name := p.ToProperName(h.name)
+	h.dbFileName = fmt.Sprintf("../temp/%s.db", name)
+	db, err := sql.Open("sqlite3", h.dbFileName)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	h.db = db
 	return nil // TODO
 }
 
 func (h *Hort) Close() error {
-	return nil // TODO
+	return h.db.Close()
 }
 
 func (h *Hort) AddPerson(person types.Person) (types.Person, error) {
