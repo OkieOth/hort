@@ -146,6 +146,7 @@ type ComplexType struct {
 	Name        string
 	Description o.Optional[string]
 	Properties  []Property
+	Tags        []string
 }
 
 type ArrayType struct {
@@ -176,4 +177,5 @@ type Property struct {
 	ValueType    any
 	ForeignKeyTo o.Optional[string]
 	Description  o.Optional[string]
+	Tags         []string
 }

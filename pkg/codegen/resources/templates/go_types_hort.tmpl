@@ -1,0 +1,42 @@
+package {{ .PackageName }}
+
+{{- if isTimeImportNeeded }}
+import "time"
+{{ end -}}
+
+{{- range $index, $type := .Schema.IntEnums }}
+
+type {{ $type.Name }} int
+const (
+{{- range $indexVal, $val := $type.Values }}
+  {{- if eq $indexVal 0 }}
+    {{ $type.Name }}_{{ $val }} {{ $type.Name }} = iota
+  {{- else }}
+    {{ $type.Name }}{{ $val }}
+  {{- end }}
+{{- end }}
+)
+{{ end -}}
+
+{{- range $index, $type := .Schema.StringEnums }}
+
+type {{ $type.Name }} string
+const (
+{{- range $type.Values }}
+	{{ $type.Name }}{{ . }} {{ $type.Name }} = "{{ . }}"
+{{- end }}
+)
+{{- end }}
+
+{{ range $index, $type := .Schema.ComplexTypes -}}
+type {{ $type.Name }} struct {
+{{- if typeHasTag $type "hort.main-type" }}
+
+  _id_ int64 // Storage Primary Key
+{{- end }}
+{{ range $type.Properties }}
+	{{ .Name }} {{ getTypeName .Name .ValueType }}
+{{ end }}
+}
+
+{{ end }}

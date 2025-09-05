@@ -3,6 +3,7 @@ package golang
 import (
 	"fmt"
 	"io"
+	"slices"
 	"text/template"
 
 	"github.com/okieoth/hort/pkg/jsonschemaparser/types"
@@ -71,6 +72,10 @@ func getTypeName(propName string, t any) string {
 	}
 }
 
+func typeHasTag(t types.ComplexType, tag string) bool {
+	return slices.Contains(t.Tags, tag)
+}
+
 func hasTimeAttribs(parsedSchema *types.ParsedSchema) bool {
 	for _, ct := range parsedSchema.ComplexTypes {
 		for _, p := range ct.Properties {
@@ -93,6 +98,7 @@ func GenerateTypes(parsedSchema *types.ParsedSchema, templateStr, packageName st
 		template.FuncMap{
 			"getTypeName":        getTypeName,
 			"isTimeImportNeeded": isTimeImportNeeded,
+			"typeHasTag":         typeHasTag,
 		}).Parse(templateStr))
 	templateInput := TemplateInput{
 		Schema:      parsedSchema,

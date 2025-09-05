@@ -719,6 +719,8 @@ func extractProperties(parentTypeName string, propertiesMap map[string]any, alre
 		} else {
 			valuesMap = m
 		}
+		tags := getTags(valuesMap)
+
 		newTypeName := ToProperName(parentTypeName + " " + ToProperName(key))
 		valueType, err := extractType(newTypeName, valuesMap, alreadyExtractedTypes, false)
 		if err != nil {
@@ -730,6 +732,7 @@ func extractProperties(parentTypeName string, propertiesMap map[string]any, alre
 			ValueType:    valueType,
 			ForeignKeyTo: getOptionalString("x-ref", valuesMap, nil),
 			Description:  getOptionalString("description", valuesMap, nil),
+			Tags:         tags,
 		})
 	}
 	return ret, nil
@@ -779,17 +782,39 @@ func extractMapType(name string, propertiesMap map[string]any, description o.Opt
 	return t, nil
 }
 
+func getTags(valuesMap map[string]any) []string {
+	if tags, ok := valuesMap["x-tags"]; ok {
+		if tagsArray, isArray := tags.([]any); isArray {
+			ret := make([]string, 0)
+			for _, t := range tagsArray {
+				ret = append(ret, fmt.Sprintf("%v", t))
+			}
+			return ret
+		}
+	}
+	return []string{}
+}
+
 func extractObjectType(name string, valuesMap map[string]any, alreadyExtractedTypes *types.ParsedSchema, topLevel bool) (any, error) {
 	description := getOptionalString("description", valuesMap, nil)
 	if properties, ok := valuesMap["properties"]; ok {
 		if m, isMap := properties.(map[string]any); isMap {
 			// found normal complex type
-			return extractComplexType(name, m, description, alreadyExtractedTypes, topLevel)
+			a, err := extractComplexType(name, m, description, alreadyExtractedTypes, topLevel)
+			a.Tags = getTags(valuesMap)
+			if len(a.Tags) > 0 {
+				alreadyExtractedTypes.ComplexTypes[a.Name] = a
+			}
+			return a, err
+		} else {
+			return types.ObjectType{}, fmt.Errorf("properties content has not map format, type: %s", name)
 		}
 	} else if additionalProperties, ok := valuesMap["additionalProperties"]; ok {
 		if m, isMap := additionalProperties.(map[string]any); isMap {
 			// found dictionary/map type
 			return extractMapType(name, m, description, alreadyExtractedTypes, topLevel)
+		} else {
+			return types.ObjectType{}, fmt.Errorf("additionalProperties content has not map format, type: %s", name)
 		}
 	}
 	return types.ObjectType{

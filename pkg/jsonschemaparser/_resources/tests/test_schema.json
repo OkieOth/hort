@@ -4,6 +4,7 @@
   "title": "Person",
   "type": "object",
   "required": ["id", "name", "contact", "roles"],
+  "x-tags": ["hort.main-type"],
   "properties": {
     "id": {
       "type": "string",

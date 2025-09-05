@@ -60,7 +60,8 @@
           "type": "string",
           "format": "date-time"
         }
-      }
+      },
+      "x-tags": ["hort.main-type"]
     },
     "Name": {
       "type": "object",

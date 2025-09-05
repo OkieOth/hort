@@ -34,24 +34,23 @@ func TestParseBytes(t *testing.T) {
 	require.Equal(t, 0, len(result.BinaryTypes))
 	require.Equal(t, 0, len(result.ObjectTypes))
 
-	personName, exist := result.ComplexTypes["PersonName"]
+	_, exist := result.ComplexTypes["PersonName"]
 	require.True(t, exist, "PersonName doesn't exist")
-	fmt.Println(personName)
 
-	personContact, exist := result.ComplexTypes["PersonContact"]
+	_, exist = result.ComplexTypes["PersonContact"]
 	require.True(t, exist, "PersonContact doesn't exist")
-	fmt.Println(personContact)
 
 	personContactAddress, exist := result.ComplexTypes["PersonContactAddress"]
 	require.True(t, exist, "PersonContactAddress doesn't exist")
-	fmt.Println(personContactAddress)
+	require.Equal(t, 0, len(personContactAddress.Tags))
 
-	personRoles, exist := result.StringEnums["PersonRolesItems"]
+	_, exist = result.StringEnums["PersonRolesItems"]
 	require.True(t, exist, "PersonRolesItems doesn't exist")
-	fmt.Println(personRoles)
 
-	_, exist = result.ComplexTypes["Person"]
+	p, exist := result.ComplexTypes["Person"]
 	require.True(t, exist, "Person doesn't exist")
+	require.Equal(t, 1, len(p.Tags))
+	require.Equal(t, "hort.main-type", p.Tags[0])
 }
 
 func TestParseBytesWithRefs(t *testing.T) {
