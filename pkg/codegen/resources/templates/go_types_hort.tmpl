@@ -10,9 +10,9 @@ type {{ $type.Name }} int
 const (
 {{- range $indexVal, $val := $type.Values }}
   {{- if eq $indexVal 0 }}
-    {{ $type.Name }}_{{ $val }} {{ $type.Name }} = iota
+    {{ upperFirstCase $type.Name }}_{{ $val }} {{ $type.Name }} = iota
   {{- else }}
-    {{ $type.Name }}{{ $val }}
+    {{ upperFirstCase $type.Name }}{{ $val }}
   {{- end }}
 {{- end }}
 )
@@ -23,7 +23,7 @@ const (
 type {{ $type.Name }} string
 const (
 {{- range $type.Values }}
-	{{ $type.Name }}{{ . }} {{ $type.Name }} = "{{ . }}"
+	{{ upperFirstCase $type.Name }}{{ . }} {{ $type.Name }} = "{{ . }}"
 {{- end }}
 )
 {{- end }}
@@ -32,10 +32,10 @@ const (
 type {{ $type.Name }} struct {
 {{- if typeHasTag $type "hort.main-type" }}
 
-  _id_ int64 // Storage Primary Key
+  Id_ int64 // Storage Primary Key
 {{- end }}
 {{ range $type.Properties }}
-	{{ .Name }} {{ getTypeName .Name .ValueType }}
+	{{ upperFirstCase .Name }} {{ getGolangType .Name .ValueType }}
 {{ end }}
 }
 

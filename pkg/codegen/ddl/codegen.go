@@ -4,81 +4,13 @@ import (
 	"html/template"
 	"io"
 
+	"github.com/okieoth/hort/pkg/codegen/helper"
+	ct "github.com/okieoth/hort/pkg/codegen/types"
 	"github.com/okieoth/hort/pkg/jsonschemaparser/types"
 )
 
-type ContainerType struct {
-	PropName  string
-	ValueType any
-}
-
-func NewContainerType(name string, valueType any) ContainerType {
-	return ContainerType{
-		PropName:  name,
-		ValueType: valueType,
-	}
-}
-
-type ComplexTypeDef struct {
-	Type       types.ComplexType
-	ArrayTypes []ContainerType // array definitions for the properties of that complex type
-	MapTypes   []ContainerType // map definitions for the properties of that type
-}
-
-func arrayTypesFromComplexType(t types.ComplexType) []ContainerType {
-	ret := make([]ContainerType, 0)
-	for _, p := range t.Properties {
-		if a, ok := p.ValueType.(types.ArrayType); ok {
-			ret = append(ret, NewContainerType(p.Name, a.ValueType))
-		}
-	}
-	return ret
-}
-
-func mapTypesFromComplexType(t types.ComplexType) []ContainerType {
-	ret := make([]ContainerType, 0)
-	for _, p := range t.Properties {
-		if m, ok := p.ValueType.(types.MapType); ok {
-			ret = append(ret, NewContainerType(p.Name, m.ValueType))
-		}
-	}
-	return ret
-}
-
-func NewComplexTypeDef(t types.ComplexType) ComplexTypeDef {
-	arrayTypes := arrayTypesFromComplexType(t)
-	mapTypes := mapTypesFromComplexType(t)
-	return ComplexTypeDef{
-		Type:       t,
-		ArrayTypes: arrayTypes,
-		MapTypes:   mapTypes,
-	}
-}
-
 type TemplateInput struct {
-	ComplexTypes []ComplexTypeDef
-}
-
-func isNeitherMapNorArray(t any) bool {
-	if _, ok := t.(types.ArrayType); ok {
-		return false
-	} else if _, ok := t.(types.MapType); ok {
-		return false
-	} else {
-		return true
-	}
-}
-
-func refPrefixIfNeeded(t any) string {
-	if _, ok := t.(types.ComplexType); ok {
-		return "_"
-	} else if _, ok := t.(types.ArrayType); ok {
-		return "_"
-	} else if _, ok := t.(types.MapType); ok {
-		return "_"
-	} else {
-		return ""
-	}
+	ComplexTypes []ct.ComplexTypeDef
 }
 
 func getColType(t any) string {
@@ -113,30 +45,14 @@ func getColType(t any) string {
 	}
 }
 
-func createTemplateInput(parsedSchema *types.ParsedSchema) []ComplexTypeDef {
-	ret := make([]ComplexTypeDef, 0)
-	for _, complexType := range parsedSchema.ComplexTypes {
-		ret = append(ret, NewComplexTypeDef(complexType))
-	}
-	return ret
-}
-
-func getContainerName(t any) string {
-	if x, ok := t.(types.ComplexType); ok {
-		return x.Name
-	} else {
-		return "value"
-	}
-}
-
 func GenerateCreateTables(parsedSchema *types.ParsedSchema, templateStr string, outputWriter io.Writer) error {
-	complexTypes := createTemplateInput(parsedSchema)
+	complexTypes := helper.CreateTemplateInput(parsedSchema)
 	tmpl := template.Must(template.New("Tables").Funcs(
 		template.FuncMap{
-			"isNeitherMapNorArray": isNeitherMapNorArray,
+			"isNeitherMapNorArray": helper.IsNeitherMapNorArray,
 			"getColType":           getColType,
-			"refPrefixIfNeeded":    refPrefixIfNeeded,
-			"getContainerName":     getContainerName,
+			"refPrefixIfNeeded":    helper.RefPrefixIfNeeded,
+			"getContainerName":     helper.GetContainerName,
 		}).Parse(templateStr))
 	templateInput := TemplateInput{
 		ComplexTypes: complexTypes,

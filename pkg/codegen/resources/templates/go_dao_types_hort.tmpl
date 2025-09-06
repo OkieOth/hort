@@ -1,42 +1,33 @@
 package {{ .PackageName }}
 
-{{- if isTimeImportNeeded }}
-import "time"
-{{ end -}}
+{{- range $index, $complexType := .ComplexTypes }}
 
-{{- range $index, $type := .Schema.IntEnums }}
-
-type {{ $type.Name }} int
-const (
-{{- range $indexVal, $val := $type.Values }}
-  {{- if eq $indexVal 0 }}
-    {{ $type.Name }}_{{ $val }} {{ $type.Name }} = iota
-  {{- else }}
-    {{ $type.Name }}{{ $val }}
+type Dao{{ $complexType.Type.Name }} struct {
+  Id_ int64 // Storage Primary Key
+  {{- range $complexType.Type.Properties }}
+    {{- if isNeitherMapNorArray .ValueType }}
+  {{ upperFirstCase .Name }}{{ refPrefixIfNeeded .ValueType "Id_" }} {{ getDaoType .ValueType }}
+    {{- end }}
   {{- end }}
-{{- end }}
-)
-{{ end -}}
-
-{{- range $index, $type := .Schema.StringEnums }}
-
-type {{ $type.Name }} string
-const (
-{{- range $type.Values }}
-	{{ $type.Name }}{{ . }} {{ $type.Name }} = "{{ . }}"
-{{- end }}
-)
-{{- end }}
-
-{{ range $index, $type := .Schema.ComplexTypes -}}
-type {{ $type.Name }} struct {
-{{- if typeHasTag $type "hort.main-type" }}
-
-  _id_ int64 // Storage Primary Key
-{{- end }}
-{{ range $type.Properties }}
-	{{ .Name }} {{ getTypeName .Name .ValueType }}
-{{ end }}
 }
 
-{{ end }}
+{{- range $indexA, $container := $complexType.ArrayTypes }}
+
+type Dao{{ $complexType.Type.Name }}_{{ $container.PropName }} struct {
+  Id_ int64 // Storage Primary Key
+  {{ upperFirstCase $complexType.Type.Name }}Id_ int64 // Reference to the parent entry
+  {{ getUpperContainerName $container.ValueType }}{{ refPrefixIfNeeded .ValueType "Id_" }} {{ getDaoType $container.ValueType }}
+}
+
+{{- end }}
+{{- range $indexA, $container := $complexType.MapTypes }}
+
+type Dao{{ $complexType.Type.Name }}_{{ $container.PropName }} struct {
+  Id_ int64 // Storage Primary Key
+  {{ upperFirstCase $complexType.Type.Name }}Id_ int64 // Reference to the parent entry
+  key string
+  {{ getUpperContainerName $container.ValueType }}{{ refPrefixIfNeeded .ValueType "Id_" }} {{ getDaoType $container.ValueType }}
+}
+
+{{- end }}
+{{- end }}

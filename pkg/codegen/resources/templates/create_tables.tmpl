@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS {{ $complexType.Type.Name }} (
   _id_ INTEGER PRIMARY KEY
   {{- range $complexType.Type.Properties }}
     {{- if isNeitherMapNorArray .ValueType }}
-  ,{{ refPrefixIfNeeded .ValueType }}{{ .Name }} {{ getColType .ValueType }}
+  ,{{ refPrefixIfNeeded .ValueType "_" }}{{ .Name }} {{ getColType .ValueType }}
     {{- end }}
   {{- end }}
 );
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS {{ $complexType.Type.Name }} (
 CREATE TABLE IF NOT EXISTS {{ $complexType.Type.Name }}_{{ $container.PropName }} (
   _id_ INTEGER PRIMARY KEY
   ,_{{ $complexType.Type.Name }} INTEGER
-  ,{{ refPrefixIfNeeded .ValueType }}{{ getContainerName $container.ValueType }} {{ getColType $container.ValueType }}
+  ,{{ refPrefixIfNeeded .ValueType "_" }}{{ getContainerName $container.ValueType }} {{ getColType $container.ValueType }}
 );
 
 {{- end }}
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS {{ $complexType.Type.Name }}_{{ $container.PropName }
   _id_ INTEGER PRIMARY KEY
   ,_{{ $complexType.Type.Name }} INTEGER
   ,key TEXT
-  ,{{ refPrefixIfNeeded .ValueType }}{{ getContainerName $container.ValueType }} {{ getColType $container.ValueType }}
+  ,{{ refPrefixIfNeeded .ValueType "_" }}{{ getContainerName $container.ValueType }} {{ getColType $container.ValueType }}
 );
 
 {{- end }}

@@ -21,55 +21,55 @@ const (
 
 type Person struct {
 
-  _id_ int64 // Storage Primary Key
+  Id_ int64 // Storage Primary Key
 
-	age int
+	Roles []PersonRolesItems
 
-	contact PersonContact
+	IsActive bool
 
-	roles []PersonRolesItems
+	CreatedAt time.Time // DateTime
 
-	isActive bool
+	IEnum PersonIEnum
 
-	createdAt time.Time // DateTime
+	Id string // UUID
 
-	iEnum PersonIEnum
+	Name PersonName
 
-	id string // UUID
+	Age int
 
-	name PersonName
+	Contact PersonContact
 
 }
 
 type PersonContact struct {
 
-	email string
+	Email string
 
-	phone string
+	Phone string
 
-	address PersonContactAddress
+	Address PersonContactAddress
 
 }
 
 type PersonContactAddress struct {
 
-	city string
+	City string
 
-	postalCode string
+	PostalCode string
 
-	country string
+	Country string
 
-	street string
+	Street string
 
 }
 
 type PersonName struct {
 
-	first string
+	Middle string
 
-	middle string
+	Last string
 
-	last string
+	First string
 
 }
 
