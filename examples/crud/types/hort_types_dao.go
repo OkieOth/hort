@@ -9,17 +9,17 @@ type DaoPersonName struct {
 
 type DaoPersonContactAddress struct {
   Id_ int64 // Storage Primary Key
-  Country string
   Street string
   City string
   PostalCode string
+  Country string
 }
 
 type DaoPersonContact struct {
   Id_ int64 // Storage Primary Key
+  Email string
   Phone string
   AddressId_ int64
-  Email string
 }
 
 type DaoPerson struct {
