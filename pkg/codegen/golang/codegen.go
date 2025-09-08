@@ -133,10 +133,6 @@ func getDaoType(t any) string {
 	}
 }
 
-func typeHasTag(t types.ComplexType, tag string) bool {
-	return slices.Contains(t.Tags, tag)
-}
-
 func getDaoNeededProperties(t types.ComplexType) []types.Property {
 	ret := make([]types.Property, 0)
 	for _, p := range t.Properties {
@@ -161,29 +157,15 @@ func getMainTypes(parsedSchema *types.ParsedSchema) []types.ComplexType {
 	return ret
 }
 
-func hasTimeAttribs(parsedSchema *types.ParsedSchema) bool {
-	for _, ct := range parsedSchema.ComplexTypes {
-		for _, p := range ct.Properties {
-			if _, ok := p.ValueType.(types.DateTimeType); ok {
-				return true
-			}
-			if _, ok := p.ValueType.(types.DateType); ok {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func GenerateTypes(parsedSchema *types.ParsedSchema, templateStr, packageName string, outputWriter io.Writer) error {
 	isTimeImportNeeded := func() bool {
-		return hasTimeAttribs(parsedSchema)
+		return helper.HasGoTimeAttribs(parsedSchema)
 	}
 	tmpl := template.Must(template.New("GolangTypes").Funcs(
 		template.FuncMap{
 			"getGolangType":      getGolangType,
 			"isTimeImportNeeded": isTimeImportNeeded,
-			"typeHasTag":         typeHasTag,
+			"typeHasTag":         helper.TypeHasTag,
 			"upperFirstCase":     helper.UpperFirstCase,
 		}).Parse(templateStr))
 	templateInput := TypesTemplateInput{

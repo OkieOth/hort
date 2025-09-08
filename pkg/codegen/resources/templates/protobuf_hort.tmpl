@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package {{ .PackageName }}
+
+option go_package = "{{ .GoPackageName }}";
+
+{{- if containsDate }}
+import "google/protobuf/date.proto";
+{{ end -}}
+{{- if containsTime }}
+import "google/protobuf/timeofday.proto";
+{{ end -}}
+{{- if containsTimestamp }}
+import "google/protobuf/timestamp.proto";
+{{ end -}}
+
+{{- range $index, $type := .Schema.IntEnums }}
+
+enum {{ $type.Name }} {
+{{- range $type.Values }}
+    VALUE_{{ . }} = {{ . }};
+{{- end }}
+}
+{{ end -}}
+
+
+{{- range $index, $type := .Schema.StringEnums }}
+
+enum {{ $type.Name }} {
+{{- range $index, $value := $type.Values }}
+	{{ upperCase $value }} = $index;
+{{- end }}
+}
+{{- end }}
+
+{{ range $index, $type := .Schema.ComplexTypes -}}
+message {{ $type.Name }} {
+{{ range $type.Properties }}
+	{{ getProtoType .Name .ValueType }} {{ .Name }} = $index;
+{{ end }}
+}
+
+{{ end }}

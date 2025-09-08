@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"slices"
 	"strings"
 
 	ct "github.com/okieoth/hort/pkg/codegen/types"
@@ -25,6 +26,10 @@ func GetContainerName(t any) string {
 
 func UpperFirstCase(s string) string {
 	return strings.ToUpper(s[0:1]) + s[1:]
+}
+
+func UpperCase(s string) string {
+	return strings.ToUpper(s)
 }
 
 func GetUpperContainerName(t any) string {
@@ -55,4 +60,45 @@ func RefPrefixIfNeeded(t any, prefix string) string {
 	} else {
 		return ""
 	}
+}
+
+func HasGoTimeAttribs(parsedSchema *types.ParsedSchema) bool {
+	for _, ct := range parsedSchema.ComplexTypes {
+		for _, p := range ct.Properties {
+			if _, ok := p.ValueType.(types.DateTimeType); ok {
+				return true
+			}
+			if _, ok := p.ValueType.(types.DateType); ok {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func hasAttribWithType[T any](parsedSchema *types.ParsedSchema) bool {
+	for _, ct := range parsedSchema.ComplexTypes {
+		for _, p := range ct.Properties {
+			if _, ok := p.ValueType.(T); ok {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func HasTimeAttribs(parsedSchema *types.ParsedSchema) bool {
+	return hasAttribWithType[types.TimeType](parsedSchema)
+}
+
+func HasTimestampAttribs(parsedSchema *types.ParsedSchema) bool {
+	return hasAttribWithType[types.DateTimeType](parsedSchema)
+}
+
+func HasDateAttribs(parsedSchema *types.ParsedSchema) bool {
+	return hasAttribWithType[types.DateType](parsedSchema)
+}
+
+func TypeHasTag(t types.ComplexType, tag string) bool {
+	return slices.Contains(t.Tags, tag)
 }
