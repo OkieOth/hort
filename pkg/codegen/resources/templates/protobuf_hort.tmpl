@@ -4,6 +4,9 @@ package {{ .PackageName }}
 
 option go_package = "{{ .GoPackageName }}";
 
+{{- if containsObject }}
+import "google/protobuf/any.proto";
+{{ end -}}
 {{- if containsDate }}
 import "google/protobuf/date.proto";
 {{ end -}}
@@ -28,15 +31,15 @@ enum {{ $type.Name }} {
 
 enum {{ $type.Name }} {
 {{- range $index, $value := $type.Values }}
-	{{ upperCase $value }} = $index;
+	{{ upperCase $value }} = {{ add $index 1 }};
 {{- end }}
 }
 {{- end }}
 
-{{ range $index, $type := .Schema.ComplexTypes -}}
+{{ range $key, $type := .Schema.ComplexTypes -}}
 message {{ $type.Name }} {
-{{ range $type.Properties }}
-	{{ getProtoType .Name .ValueType }} {{ .Name }} = $index;
+{{ range $index, $prop := $type.Properties }}
+	{{ getProtoType $prop.Name $prop.ValueType }} {{ $prop.Name }} = {{ add $index 1 }};
 {{ end }}
 }
 

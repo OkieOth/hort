@@ -19,7 +19,7 @@ func getProtoType(propName string, t any) string {
 	if o, ok := t.(types.ComplexType); ok {
 		return o.Name
 	} else if o, ok := t.(types.ArrayType); ok {
-		return fmt.Sprintf("[]%s", getProtoType(propName, o.ValueType))
+		return fmt.Sprintf("repeated %s", getProtoType(propName, o.ValueType))
 	} else if o, ok := t.(types.MapType); ok {
 		return fmt.Sprintf("map[string]%s", getProtoType(propName, o.ValueType))
 	} else if o, ok := t.(types.IntEnumType); ok {
@@ -55,19 +55,21 @@ func getProtoType(propName string, t any) string {
 	} else if _, ok := t.(types.StringType); ok {
 		return "string"
 	} else if _, ok := t.(types.UUIDType); ok {
-		return "string // UUID"
+		return "string"
 	} else if _, ok := t.(types.DateType); ok {
-		return "time.Time // Date"
+		return "time.Time"
 	} else if _, ok := t.(types.DateTimeType); ok {
-		return "time.Time // DateTime"
+		return "google.protobuf.Timestamp"
 	} else if _, ok := t.(types.TimeType); ok {
-		return "string // Time"
+		return "google.protobuf.TimeOfDay"
 	} else if _, ok := t.(types.DurationType); ok {
-		return "string // Duration"
+		return "string"
 	} else if _, ok := t.(types.BoolType); ok {
 		return "bool"
 	} else if _, ok := t.(types.BinaryType); ok {
-		return "string // Binary"
+		return "string"
+	} else if _, ok := t.(types.ObjectType); ok {
+		return "google.protobuf.Any"
 	} else {
 		return "??? unsupported type: " + propName
 	}
@@ -83,9 +85,14 @@ func GenerateProtoFile(parsedSchema *types.ParsedSchema, templateStr, packageNam
 	containsTimestamp := func() bool {
 		return helper.HasTimestampAttribs(parsedSchema)
 	}
+	containsObject := func() bool {
+		return helper.HasPureObjectAttribs(parsedSchema)
+	}
 	tmpl := template.Must(template.New("GolangTypes").Funcs(
 		template.FuncMap{
-			"getProtobufType":   getProtoType,
+			"add":               helper.Add,
+			"getProtoType":      getProtoType,
+			"containsObject":    containsObject,
 			"containsDate":      containsDate,
 			"containsTime":      containsTime,
 			"containsTimestamp": containsTimestamp,

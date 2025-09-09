@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package person
+
+option go_package = "github.com/okieoth/hort/examples/crud/protobuf";
+import "google/protobuf/timestamp.proto";
+
+
+enum PersonIEnum {
+    VALUE_1 = 1;
+    VALUE_2 = 2;
+    VALUE_4 = 4;
+    VALUE_8 = 8;
+    VALUE_16 = 16;
+}
+
+
+enum PersonRolesItems {
+	ADMIN = 1;
+	EDITOR = 2;
+	VIEWER = 3;
+}
+
+message Person {
+
+	PersonName name = 1;
+
+	int32 age = 2;
+
+	PersonContact contact = 3;
+
+	repeated PersonRolesItems roles = 4;
+
+	bool isActive = 5;
+
+	google.protobuf.Timestamp createdAt = 6;
+
+	PersonIEnum iEnum = 7;
+
+	string id = 8;
+
+}
+
+message PersonContact {
+
+	string email = 1;
+
+	string phone = 2;
+
+	PersonContactAddress address = 3;
+
+}
+
+message PersonContactAddress {
+
+	string city = 1;
+
+	string postalCode = 2;
+
+	string country = 3;
+
+	string street = 4;
+
+}
+
+message PersonName {
+
+	string first = 1;
+
+	string middle = 2;
+
+	string last = 3;
+
+}
+
+

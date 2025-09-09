@@ -99,6 +99,14 @@ func HasDateAttribs(parsedSchema *types.ParsedSchema) bool {
 	return hasAttribWithType[types.DateType](parsedSchema)
 }
 
+func HasPureObjectAttribs(parsedSchema *types.ParsedSchema) bool {
+	return hasAttribWithType[types.ObjectType](parsedSchema)
+}
+
 func TypeHasTag(t types.ComplexType, tag string) bool {
 	return slices.Contains(t.Tags, tag)
+}
+
+func Add(v1, v2 int) int {
+	return v1 + v2
 }
