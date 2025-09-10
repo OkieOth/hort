@@ -1,12 +1,13 @@
 syntax = "proto3";
 
-package person
+package person;
 
 option go_package = "github.com/okieoth/hort/examples/crud/protobuf";
 import "google/protobuf/timestamp.proto";
 
 
 enum PersonIEnum {
+    PERSONIENUM_UNSPECIFIED = 0;
     VALUE_1 = 1;
     VALUE_2 = 2;
     VALUE_4 = 4;
@@ -16,6 +17,7 @@ enum PersonIEnum {
 
 
 enum PersonRolesItems {
+    PERSONROLESITEMS_UNSPECIFIED = 0;
 	ADMIN = 1;
 	EDITOR = 2;
 	VIEWER = 3;
@@ -23,21 +25,21 @@ enum PersonRolesItems {
 
 message Person {
 
-	PersonName name = 1;
+	PersonContact contact = 1;
 
-	int32 age = 2;
+	repeated PersonRolesItems roles = 2;
 
-	PersonContact contact = 3;
+	bool isActive = 3;
 
-	repeated PersonRolesItems roles = 4;
+	google.protobuf.Timestamp createdAt = 4;
 
-	bool isActive = 5;
+	PersonIEnum iEnum = 5;
 
-	google.protobuf.Timestamp createdAt = 6;
+	string id = 6;
 
-	PersonIEnum iEnum = 7;
+	PersonName name = 7;
 
-	string id = 8;
+	int32 age = 8;
 
 }
 
@@ -53,24 +55,76 @@ message PersonContact {
 
 message PersonContactAddress {
 
-	string city = 1;
+	string street = 1;
 
-	string postalCode = 2;
+	string city = 2;
 
-	string country = 3;
+	string postalCode = 3;
 
-	string street = 4;
+	string country = 4;
 
 }
 
 message PersonName {
 
-	string first = 1;
+	string last = 1;
 
-	string middle = 2;
+	string first = 2;
 
-	string last = 3;
+	string middle = 3;
 
 }
+
+
+
+
+message CreatePersonRequest {
+  Person person = 1;
+}
+message CreatePersonResponse {
+  Person person = 1;
+}
+
+message GetPersonRequest {
+  string id = 1;
+}
+message GetPersonResponse {
+  Person person = 1;
+}
+
+message UpdatePersonRequest {
+  Person person = 1;
+}
+message UpdatePersonResponse {
+  Person person = 1;
+}
+
+message DeletePersonRequest {
+  string id = 1;
+}
+message DeletePersonResponse {
+  bool success = 1;
+}
+
+message ListPersonsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+message ListPersonsResponse {
+  repeated Person persons = 1;
+  string next_page_token = 2;
+}
+
+service PersonService {
+  rpc CreatePerson(CreatePersonRequest) returns (CreatePersonResponse);
+  rpc GetPerson(GetPersonRequest) returns (GetPersonResponse);
+  rpc UpdatePerson(UpdatePersonRequest) returns (UpdatePersonResponse);
+  rpc DeletePerson(DeletePersonRequest) returns (DeletePersonResponse);
+  rpc ListPersons(ListPersonsRequest) returns (ListPersonsResponse);
+}
+
+
+
+
 
 

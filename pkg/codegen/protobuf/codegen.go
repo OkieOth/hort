@@ -99,6 +99,8 @@ func GenerateProtoFile(parsedSchema *types.ParsedSchema, templateStr, packageNam
 			"typeHasTag":        helper.TypeHasTag,
 			"upperFirstCase":    helper.UpperFirstCase,
 			"upperCase":         helper.UpperCase,
+			"lowerFirstCase":    helper.LowerFirstCase,
+			"lowerCase":         helper.LowerCase,
 		}).Parse(templateStr))
 	templateInput := ProtoTemplateInput{
 		Schema:        parsedSchema,

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package {{ .PackageName }}
+package {{ .PackageName }};
 
 option go_package = "{{ .GoPackageName }}";
 
@@ -20,6 +20,7 @@ import "google/protobuf/timestamp.proto";
 {{- range $index, $type := .Schema.IntEnums }}
 
 enum {{ $type.Name }} {
+    {{ upperCase $type.Name }}_UNSPECIFIED = 0;
 {{- range $type.Values }}
     VALUE_{{ . }} = {{ . }};
 {{- end }}
@@ -30,6 +31,7 @@ enum {{ $type.Name }} {
 {{- range $index, $type := .Schema.StringEnums }}
 
 enum {{ $type.Name }} {
+    {{ upperCase $type.Name }}_UNSPECIFIED = 0;
 {{- range $index, $value := $type.Values }}
 	{{ upperCase $value }} = {{ add $index 1 }};
 {{- end }}
@@ -43,4 +45,54 @@ message {{ $type.Name }} {
 {{ end }}
 }
 
+{{ end }}
+
+{{ range $index, $type := .Schema.ComplexTypes -}}
+{{- if typeHasTag $type "hort.main-type" }}
+message Create{{ $type.Name }}Request {
+  {{ $type.Name }} {{ lowerFirstCase $type.Name }} = 1;
+}
+message Create{{ $type.Name }}Response {
+  {{ $type.Name }} {{ lowerFirstCase $type.Name }} = 1;
+}
+
+message Get{{ $type.Name }}Request {
+  string id = 1;
+}
+message Get{{ $type.Name }}Response {
+  {{ $type.Name }} {{ lowerFirstCase $type.Name }} = 1;
+}
+
+message Update{{ $type.Name }}Request {
+  {{ $type.Name }} {{ lowerFirstCase $type.Name }} = 1;
+}
+message Update{{ $type.Name }}Response {
+  {{ $type.Name }} {{ lowerFirstCase $type.Name }} = 1;
+}
+
+message Delete{{ $type.Name }}Request {
+  string id = 1;
+}
+message Delete{{ $type.Name }}Response {
+  bool success = 1;
+}
+
+message List{{ $type.Name }}sRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+message List{{ $type.Name }}sResponse {
+  repeated {{ $type.Name }} {{ lowerFirstCase $type.Name }}s = 1;
+  string next_page_token = 2;
+}
+
+service {{ $type.Name }}Service {
+  rpc Create{{ $type.Name }}(Create{{ $type.Name }}Request) returns (Create{{ $type.Name }}Response);
+  rpc GetPerson(Get{{ $type.Name }}Request) returns (Get{{ $type.Name }}Response);
+  rpc UpdatePerson(Update{{ $type.Name }}Request) returns (Update{{ $type.Name }}Response);
+  rpc DeletePerson(Delete{{ $type.Name }}Request) returns (Delete{{ $type.Name }}Response);
+  rpc ListPersons(List{{ $type.Name }}sRequest) returns (List{{ $type.Name }}sResponse);
+}
+
+{{ end }}
 {{ end }}

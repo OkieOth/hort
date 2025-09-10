@@ -4,7 +4,7 @@
 // - protoc             v3.21.12
 // source: examples/crud/protobuf/service.proto
 
-package crud
+package protobuf
 
 import (
 	context "context"
@@ -29,8 +29,6 @@ const (
 // PersonServiceClient is the client API for PersonService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// PersonService with basic CRUD
 type PersonServiceClient interface {
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*CreatePersonResponse, error)
 	GetPerson(ctx context.Context, in *GetPersonRequest, opts ...grpc.CallOption) (*GetPersonResponse, error)
@@ -100,8 +98,6 @@ func (c *personServiceClient) ListPersons(ctx context.Context, in *ListPersonsRe
 // PersonServiceServer is the server API for PersonService service.
 // All implementations must embed UnimplementedPersonServiceServer
 // for forward compatibility.
-//
-// PersonService with basic CRUD
 type PersonServiceServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*CreatePersonResponse, error)
 	GetPerson(context.Context, *GetPersonRequest) (*GetPersonResponse, error)

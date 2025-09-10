@@ -32,6 +32,14 @@ func UpperCase(s string) string {
 	return strings.ToUpper(s)
 }
 
+func LowerCase(s string) string {
+	return strings.ToLower(s)
+}
+
+func LowerFirstCase(s string) string {
+	return strings.ToLower(s[0:1]) + s[1:]
+}
+
 func GetUpperContainerName(t any) string {
 	if x, ok := t.(types.ComplexType); ok {
 		return UpperFirstCase(x.Name)

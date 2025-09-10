@@ -2,6 +2,7 @@ package protobuf_test
 
 import (
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
@@ -22,6 +23,9 @@ func TestGenerateProtoFile(t *testing.T) {
 	require.Nil(t, err)
 	packageName := "person"
 	goPackageName := "github.com/okieoth/hort/examples/crud/protobuf"
+
+	_ = os.Remove(outputFile)
+
 	var stringBuilder strings.Builder
 	err = c.GenerateProtoFile(&parsedSchema, string(templateBytes), packageName, goPackageName, &stringBuilder)
 	require.Nil(t, err)
@@ -30,16 +34,21 @@ func TestGenerateProtoFile(t *testing.T) {
 	require.Nil(t, err)
 	defer file.Close()
 	file.WriteString(s)
+	require.FileExists(t, outputFile, "couldn't find generated protobuf file")
 
-	// _ = os.Remove(dbFile)
-	// cmd := exec.Command("sqlite3", dbFile, fmt.Sprintf(".read %s", outputFile))
-	// out, err := cmd.CombinedOutput()
-	// require.Nil(t, err, "sqlite3 error: %s", string(out))
-
-	// // verify that tables were created (example: check sqlite_master)
-	// cmd = exec.Command("sqlite3", dbFile, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")
-	// out, err = cmd.CombinedOutput()
-	// require.Nil(t, err, "failed to query sqlite_master: %s", string(out))
-	// tables := strings.TrimSpace(string(out))
-	// require.Equal(t, "Person\nPersonContact\nPersonContactAddress\nPersonName\nPerson_roles", tables, "wrong tables created")
+	typesFile := "../../../examples/crud/protobuf/service.pb.go"
+	serviceFile := "../../../examples/crud/protobuf/service_grpc.pb.go"
+	_ = os.Remove(typesFile)
+	_ = os.Remove(serviceFile)
+	cmd := exec.Command("protoc",
+		"--proto_path=../../..",
+		"--go_out=../../..",
+		"--go_opt=paths=source_relative",
+		"--go-grpc_out=../../..",
+		"--go-grpc_opt=paths=source_relative",
+		"examples/crud/protobuf/service.proto")
+	out, err := cmd.CombinedOutput()
+	require.Nil(t, err, "protoc error: %s", string(out))
+	require.FileExists(t, typesFile, "couldn't find generated grpc types file")
+	require.FileExists(t, serviceFile, "couldn't find generated grpc service file")
 }

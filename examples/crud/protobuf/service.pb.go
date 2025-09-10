@@ -4,7 +4,7 @@
 // 	protoc        v3.21.12
 // source: examples/crud/protobuf/service.proto
 
-package crud
+package protobuf
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -22,323 +22,133 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Role int32
+type PersonIEnum int32
 
 const (
-	Role_ROLE_UNSPECIFIED Role = 0
-	Role_ADMIN            Role = 1
-	Role_EDITOR           Role = 2
-	Role_VIEWER           Role = 3
+	PersonIEnum_PERSONIENUM_UNSPECIFIED PersonIEnum = 0
+	PersonIEnum_VALUE_1                 PersonIEnum = 1
+	PersonIEnum_VALUE_2                 PersonIEnum = 2
+	PersonIEnum_VALUE_4                 PersonIEnum = 4
+	PersonIEnum_VALUE_8                 PersonIEnum = 8
+	PersonIEnum_VALUE_16                PersonIEnum = 16
 )
 
-// Enum value maps for Role.
+// Enum value maps for PersonIEnum.
 var (
-	Role_name = map[int32]string{
-		0: "ROLE_UNSPECIFIED",
-		1: "ADMIN",
-		2: "EDITOR",
-		3: "VIEWER",
-	}
-	Role_value = map[string]int32{
-		"ROLE_UNSPECIFIED": 0,
-		"ADMIN":            1,
-		"EDITOR":           2,
-		"VIEWER":           3,
-	}
-)
-
-func (x Role) Enum() *Role {
-	p := new(Role)
-	*p = x
-	return p
-}
-
-func (x Role) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (Role) Descriptor() protoreflect.EnumDescriptor {
-	return file_examples_crud_protobuf_service_proto_enumTypes[0].Descriptor()
-}
-
-func (Role) Type() protoreflect.EnumType {
-	return &file_examples_crud_protobuf_service_proto_enumTypes[0]
-}
-
-func (x Role) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use Role.Descriptor instead.
-func (Role) EnumDescriptor() ([]byte, []int) {
-	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{0}
-}
-
-type IEnum int32
-
-const (
-	IEnum_IENUM_UNSPECIFIED IEnum = 0
-	IEnum_VALUE_1           IEnum = 1
-	IEnum_VALUE_2           IEnum = 2
-	IEnum_VALUE_4           IEnum = 4
-	IEnum_VALUE_8           IEnum = 8
-	IEnum_VALUE_16          IEnum = 16
-)
-
-// Enum value maps for IEnum.
-var (
-	IEnum_name = map[int32]string{
-		0:  "IENUM_UNSPECIFIED",
+	PersonIEnum_name = map[int32]string{
+		0:  "PERSONIENUM_UNSPECIFIED",
 		1:  "VALUE_1",
 		2:  "VALUE_2",
 		4:  "VALUE_4",
 		8:  "VALUE_8",
 		16: "VALUE_16",
 	}
-	IEnum_value = map[string]int32{
-		"IENUM_UNSPECIFIED": 0,
-		"VALUE_1":           1,
-		"VALUE_2":           2,
-		"VALUE_4":           4,
-		"VALUE_8":           8,
-		"VALUE_16":          16,
+	PersonIEnum_value = map[string]int32{
+		"PERSONIENUM_UNSPECIFIED": 0,
+		"VALUE_1":                 1,
+		"VALUE_2":                 2,
+		"VALUE_4":                 4,
+		"VALUE_8":                 8,
+		"VALUE_16":                16,
 	}
 )
 
-func (x IEnum) Enum() *IEnum {
-	p := new(IEnum)
+func (x PersonIEnum) Enum() *PersonIEnum {
+	p := new(PersonIEnum)
 	*p = x
 	return p
 }
 
-func (x IEnum) String() string {
+func (x PersonIEnum) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (IEnum) Descriptor() protoreflect.EnumDescriptor {
-	return file_examples_crud_protobuf_service_proto_enumTypes[1].Descriptor()
+func (PersonIEnum) Descriptor() protoreflect.EnumDescriptor {
+	return file_examples_crud_protobuf_service_proto_enumTypes[0].Descriptor()
 }
 
-func (IEnum) Type() protoreflect.EnumType {
-	return &file_examples_crud_protobuf_service_proto_enumTypes[1]
+func (PersonIEnum) Type() protoreflect.EnumType {
+	return &file_examples_crud_protobuf_service_proto_enumTypes[0]
 }
 
-func (x IEnum) Number() protoreflect.EnumNumber {
+func (x PersonIEnum) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use IEnum.Descriptor instead.
-func (IEnum) EnumDescriptor() ([]byte, []int) {
-	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{1}
-}
-
-// Subtypes
-type Name struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	First         string                 `protobuf:"bytes,1,opt,name=first,proto3" json:"first,omitempty"`
-	Middle        string                 `protobuf:"bytes,2,opt,name=middle,proto3" json:"middle,omitempty"`
-	Last          string                 `protobuf:"bytes,3,opt,name=last,proto3" json:"last,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Name) Reset() {
-	*x = Name{}
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Name) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Name) ProtoMessage() {}
-
-func (x *Name) ProtoReflect() protoreflect.Message {
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Name.ProtoReflect.Descriptor instead.
-func (*Name) Descriptor() ([]byte, []int) {
+// Deprecated: Use PersonIEnum.Descriptor instead.
+func (PersonIEnum) EnumDescriptor() ([]byte, []int) {
 	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Name) GetFirst() string {
-	if x != nil {
-		return x.First
+type PersonRolesItems int32
+
+const (
+	PersonRolesItems_PERSONROLESITEMS_UNSPECIFIED PersonRolesItems = 0
+	PersonRolesItems_ADMIN                        PersonRolesItems = 1
+	PersonRolesItems_EDITOR                       PersonRolesItems = 2
+	PersonRolesItems_VIEWER                       PersonRolesItems = 3
+)
+
+// Enum value maps for PersonRolesItems.
+var (
+	PersonRolesItems_name = map[int32]string{
+		0: "PERSONROLESITEMS_UNSPECIFIED",
+		1: "ADMIN",
+		2: "EDITOR",
+		3: "VIEWER",
 	}
-	return ""
-}
-
-func (x *Name) GetMiddle() string {
-	if x != nil {
-		return x.Middle
+	PersonRolesItems_value = map[string]int32{
+		"PERSONROLESITEMS_UNSPECIFIED": 0,
+		"ADMIN":                        1,
+		"EDITOR":                       2,
+		"VIEWER":                       3,
 	}
-	return ""
+)
+
+func (x PersonRolesItems) Enum() *PersonRolesItems {
+	p := new(PersonRolesItems)
+	*p = x
+	return p
 }
 
-func (x *Name) GetLast() string {
-	if x != nil {
-		return x.Last
-	}
-	return ""
+func (x PersonRolesItems) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-type Address struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Street        string                 `protobuf:"bytes,1,opt,name=street,proto3" json:"street,omitempty"`
-	City          string                 `protobuf:"bytes,2,opt,name=city,proto3" json:"city,omitempty"`
-	PostalCode    string                 `protobuf:"bytes,3,opt,name=postalCode,proto3" json:"postalCode,omitempty"`
-	Country       string                 `protobuf:"bytes,4,opt,name=country,proto3" json:"country,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+func (PersonRolesItems) Descriptor() protoreflect.EnumDescriptor {
+	return file_examples_crud_protobuf_service_proto_enumTypes[1].Descriptor()
 }
 
-func (x *Address) Reset() {
-	*x = Address{}
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
+func (PersonRolesItems) Type() protoreflect.EnumType {
+	return &file_examples_crud_protobuf_service_proto_enumTypes[1]
 }
 
-func (x *Address) String() string {
-	return protoimpl.X.MessageStringOf(x)
+func (x PersonRolesItems) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-func (*Address) ProtoMessage() {}
-
-func (x *Address) ProtoReflect() protoreflect.Message {
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Address.ProtoReflect.Descriptor instead.
-func (*Address) Descriptor() ([]byte, []int) {
+// Deprecated: Use PersonRolesItems.Descriptor instead.
+func (PersonRolesItems) EnumDescriptor() ([]byte, []int) {
 	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Address) GetStreet() string {
-	if x != nil {
-		return x.Street
-	}
-	return ""
-}
-
-func (x *Address) GetCity() string {
-	if x != nil {
-		return x.City
-	}
-	return ""
-}
-
-func (x *Address) GetPostalCode() string {
-	if x != nil {
-		return x.PostalCode
-	}
-	return ""
-}
-
-func (x *Address) GetCountry() string {
-	if x != nil {
-		return x.Country
-	}
-	return ""
-}
-
-type Contact struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	Address       *Address               `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Contact) Reset() {
-	*x = Contact{}
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Contact) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Contact) ProtoMessage() {}
-
-func (x *Contact) ProtoReflect() protoreflect.Message {
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Contact.ProtoReflect.Descriptor instead.
-func (*Contact) Descriptor() ([]byte, []int) {
-	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Contact) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *Contact) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
-func (x *Contact) GetAddress() *Address {
-	if x != nil {
-		return x.Address
-	}
-	return nil
-}
-
-// Main Person entity
 type Person struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"` // UUID
-	Name          *Name                  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Age           int32                  `protobuf:"varint,3,opt,name=age,proto3" json:"age,omitempty"`
-	Contact       *Contact               `protobuf:"bytes,4,opt,name=contact,proto3" json:"contact,omitempty"`
-	Roles         []Role                 `protobuf:"varint,5,rep,packed,name=roles,proto3,enum=person.Role" json:"roles,omitempty"`
-	IsActive      bool                   `protobuf:"varint,6,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Ienum         IEnum                  `protobuf:"varint,8,opt,name=ienum,proto3,enum=person.IEnum" json:"ienum,omitempty"`
+	Contact       *PersonContact         `protobuf:"bytes,1,opt,name=contact,proto3" json:"contact,omitempty"`
+	Roles         []PersonRolesItems     `protobuf:"varint,2,rep,packed,name=roles,proto3,enum=person.PersonRolesItems" json:"roles,omitempty"`
+	IsActive      bool                   `protobuf:"varint,3,opt,name=isActive,proto3" json:"isActive,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	IEnum         PersonIEnum            `protobuf:"varint,5,opt,name=iEnum,proto3,enum=person.PersonIEnum" json:"iEnum,omitempty"`
+	Id            string                 `protobuf:"bytes,6,opt,name=id,proto3" json:"id,omitempty"`
+	Name          *PersonName            `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+	Age           int32                  `protobuf:"varint,8,opt,name=age,proto3" json:"age,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Person) Reset() {
 	*x = Person{}
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[3]
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -350,7 +160,7 @@ func (x *Person) String() string {
 func (*Person) ProtoMessage() {}
 
 func (x *Person) ProtoReflect() protoreflect.Message {
-	mi := &file_examples_crud_protobuf_service_proto_msgTypes[3]
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -363,38 +173,17 @@ func (x *Person) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Person.ProtoReflect.Descriptor instead.
 func (*Person) Descriptor() ([]byte, []int) {
-	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{3}
+	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Person) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Person) GetName() *Name {
-	if x != nil {
-		return x.Name
-	}
-	return nil
-}
-
-func (x *Person) GetAge() int32 {
-	if x != nil {
-		return x.Age
-	}
-	return 0
-}
-
-func (x *Person) GetContact() *Contact {
+func (x *Person) GetContact() *PersonContact {
 	if x != nil {
 		return x.Contact
 	}
 	return nil
 }
 
-func (x *Person) GetRoles() []Role {
+func (x *Person) GetRoles() []PersonRolesItems {
 	if x != nil {
 		return x.Roles
 	}
@@ -415,14 +204,222 @@ func (x *Person) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Person) GetIenum() IEnum {
+func (x *Person) GetIEnum() PersonIEnum {
 	if x != nil {
-		return x.Ienum
+		return x.IEnum
 	}
-	return IEnum_IENUM_UNSPECIFIED
+	return PersonIEnum_PERSONIENUM_UNSPECIFIED
 }
 
-// CRUD request/response messages
+func (x *Person) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Person) GetName() *PersonName {
+	if x != nil {
+		return x.Name
+	}
+	return nil
+}
+
+func (x *Person) GetAge() int32 {
+	if x != nil {
+		return x.Age
+	}
+	return 0
+}
+
+type PersonContact struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
+	Address       *PersonContactAddress  `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PersonContact) Reset() {
+	*x = PersonContact{}
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PersonContact) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PersonContact) ProtoMessage() {}
+
+func (x *PersonContact) ProtoReflect() protoreflect.Message {
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PersonContact.ProtoReflect.Descriptor instead.
+func (*PersonContact) Descriptor() ([]byte, []int) {
+	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *PersonContact) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *PersonContact) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *PersonContact) GetAddress() *PersonContactAddress {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+type PersonContactAddress struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Street        string                 `protobuf:"bytes,1,opt,name=street,proto3" json:"street,omitempty"`
+	City          string                 `protobuf:"bytes,2,opt,name=city,proto3" json:"city,omitempty"`
+	PostalCode    string                 `protobuf:"bytes,3,opt,name=postalCode,proto3" json:"postalCode,omitempty"`
+	Country       string                 `protobuf:"bytes,4,opt,name=country,proto3" json:"country,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PersonContactAddress) Reset() {
+	*x = PersonContactAddress{}
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PersonContactAddress) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PersonContactAddress) ProtoMessage() {}
+
+func (x *PersonContactAddress) ProtoReflect() protoreflect.Message {
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PersonContactAddress.ProtoReflect.Descriptor instead.
+func (*PersonContactAddress) Descriptor() ([]byte, []int) {
+	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PersonContactAddress) GetStreet() string {
+	if x != nil {
+		return x.Street
+	}
+	return ""
+}
+
+func (x *PersonContactAddress) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *PersonContactAddress) GetPostalCode() string {
+	if x != nil {
+		return x.PostalCode
+	}
+	return ""
+}
+
+func (x *PersonContactAddress) GetCountry() string {
+	if x != nil {
+		return x.Country
+	}
+	return ""
+}
+
+type PersonName struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Last          string                 `protobuf:"bytes,1,opt,name=last,proto3" json:"last,omitempty"`
+	First         string                 `protobuf:"bytes,2,opt,name=first,proto3" json:"first,omitempty"`
+	Middle        string                 `protobuf:"bytes,3,opt,name=middle,proto3" json:"middle,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PersonName) Reset() {
+	*x = PersonName{}
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PersonName) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PersonName) ProtoMessage() {}
+
+func (x *PersonName) ProtoReflect() protoreflect.Message {
+	mi := &file_examples_crud_protobuf_service_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PersonName.ProtoReflect.Descriptor instead.
+func (*PersonName) Descriptor() ([]byte, []int) {
+	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PersonName) GetLast() string {
+	if x != nil {
+		return x.Last
+	}
+	return ""
+}
+
+func (x *PersonName) GetFirst() string {
+	if x != nil {
+		return x.First
+	}
+	return ""
+}
+
+func (x *PersonName) GetMiddle() string {
+	if x != nil {
+		return x.Middle
+	}
+	return ""
+}
+
 type CreatePersonRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Person        *Person                `protobuf:"bytes,1,opt,name=person,proto3" json:"person,omitempty"`
@@ -883,32 +880,32 @@ var File_examples_crud_protobuf_service_proto protoreflect.FileDescriptor
 
 const file_examples_crud_protobuf_service_proto_rawDesc = "" +
 	"\n" +
-	"$examples/crud/protobuf/service.proto\x12\x06person\x1a\x1fgoogle/protobuf/timestamp.proto\"H\n" +
-	"\x04Name\x12\x14\n" +
-	"\x05first\x18\x01 \x01(\tR\x05first\x12\x16\n" +
-	"\x06middle\x18\x02 \x01(\tR\x06middle\x12\x12\n" +
-	"\x04last\x18\x03 \x01(\tR\x04last\"o\n" +
-	"\aAddress\x12\x16\n" +
+	"$examples/crud/protobuf/service.proto\x12\x06person\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb4\x02\n" +
+	"\x06Person\x12/\n" +
+	"\acontact\x18\x01 \x01(\v2\x15.person.PersonContactR\acontact\x12.\n" +
+	"\x05roles\x18\x02 \x03(\x0e2\x18.person.PersonRolesItemsR\x05roles\x12\x1a\n" +
+	"\bisActive\x18\x03 \x01(\bR\bisActive\x128\n" +
+	"\tcreatedAt\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
+	"\x05iEnum\x18\x05 \x01(\x0e2\x13.person.PersonIEnumR\x05iEnum\x12\x0e\n" +
+	"\x02id\x18\x06 \x01(\tR\x02id\x12&\n" +
+	"\x04name\x18\a \x01(\v2\x12.person.PersonNameR\x04name\x12\x10\n" +
+	"\x03age\x18\b \x01(\x05R\x03age\"s\n" +
+	"\rPersonContact\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
+	"\x05phone\x18\x02 \x01(\tR\x05phone\x126\n" +
+	"\aaddress\x18\x03 \x01(\v2\x1c.person.PersonContactAddressR\aaddress\"|\n" +
+	"\x14PersonContactAddress\x12\x16\n" +
 	"\x06street\x18\x01 \x01(\tR\x06street\x12\x12\n" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1e\n" +
 	"\n" +
 	"postalCode\x18\x03 \x01(\tR\n" +
 	"postalCode\x12\x18\n" +
-	"\acountry\x18\x04 \x01(\tR\acountry\"`\n" +
-	"\aContact\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
-	"\x05phone\x18\x02 \x01(\tR\x05phone\x12)\n" +
-	"\aaddress\x18\x03 \x01(\v2\x0f.person.AddressR\aaddress\"\x98\x02\n" +
-	"\x06Person\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12 \n" +
-	"\x04name\x18\x02 \x01(\v2\f.person.NameR\x04name\x12\x10\n" +
-	"\x03age\x18\x03 \x01(\x05R\x03age\x12)\n" +
-	"\acontact\x18\x04 \x01(\v2\x0f.person.ContactR\acontact\x12\"\n" +
-	"\x05roles\x18\x05 \x03(\x0e2\f.person.RoleR\x05roles\x12\x1b\n" +
-	"\tis_active\x18\x06 \x01(\bR\bisActive\x129\n" +
+	"\acountry\x18\x04 \x01(\tR\acountry\"N\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12#\n" +
-	"\x05ienum\x18\b \x01(\x0e2\r.person.IEnumR\x05ienum\"=\n" +
+	"PersonName\x12\x12\n" +
+	"\x04last\x18\x01 \x01(\tR\x04last\x12\x14\n" +
+	"\x05first\x18\x02 \x01(\tR\x05first\x12\x16\n" +
+	"\x06middle\x18\x03 \x01(\tR\x06middle\"=\n" +
 	"\x13CreatePersonRequest\x12&\n" +
 	"\x06person\x18\x01 \x01(\v2\x0e.person.PersonR\x06person\">\n" +
 	"\x14CreatePersonResponse\x12&\n" +
@@ -931,27 +928,27 @@ const file_examples_crud_protobuf_service_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"g\n" +
 	"\x13ListPersonsResponse\x12(\n" +
 	"\apersons\x18\x01 \x03(\v2\x0e.person.PersonR\apersons\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken*?\n" +
-	"\x04Role\x12\x14\n" +
-	"\x10ROLE_UNSPECIFIED\x10\x00\x12\t\n" +
-	"\x05ADMIN\x10\x01\x12\n" +
-	"\n" +
-	"\x06EDITOR\x10\x02\x12\n" +
-	"\n" +
-	"\x06VIEWER\x10\x03*`\n" +
-	"\x05IEnum\x12\x15\n" +
-	"\x11IENUM_UNSPECIFIED\x10\x00\x12\v\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken*l\n" +
+	"\vPersonIEnum\x12\x1b\n" +
+	"\x17PERSONIENUM_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aVALUE_1\x10\x01\x12\v\n" +
 	"\aVALUE_2\x10\x02\x12\v\n" +
 	"\aVALUE_4\x10\x04\x12\v\n" +
 	"\aVALUE_8\x10\b\x12\f\n" +
-	"\bVALUE_16\x10\x102\xfa\x02\n" +
+	"\bVALUE_16\x10\x10*W\n" +
+	"\x10PersonRolesItems\x12 \n" +
+	"\x1cPERSONROLESITEMS_UNSPECIFIED\x10\x00\x12\t\n" +
+	"\x05ADMIN\x10\x01\x12\n" +
+	"\n" +
+	"\x06EDITOR\x10\x02\x12\n" +
+	"\n" +
+	"\x06VIEWER\x10\x032\xfa\x02\n" +
 	"\rPersonService\x12I\n" +
 	"\fCreatePerson\x12\x1b.person.CreatePersonRequest\x1a\x1c.person.CreatePersonResponse\x12@\n" +
 	"\tGetPerson\x12\x18.person.GetPersonRequest\x1a\x19.person.GetPersonResponse\x12I\n" +
 	"\fUpdatePerson\x12\x1b.person.UpdatePersonRequest\x1a\x1c.person.UpdatePersonResponse\x12I\n" +
 	"\fDeletePerson\x12\x1b.person.DeletePersonRequest\x1a\x1c.person.DeletePersonResponse\x12F\n" +
-	"\vListPersons\x12\x1a.person.ListPersonsRequest\x1a\x1b.person.ListPersonsResponseB'Z%github.com/okieoth/hort/examples/crudb\x06proto3"
+	"\vListPersons\x12\x1a.person.ListPersonsRequest\x1a\x1b.person.ListPersonsResponseB0Z.github.com/okieoth/hort/examples/crud/protobufb\x06proto3"
 
 var (
 	file_examples_crud_protobuf_service_proto_rawDescOnce sync.Once
@@ -968,12 +965,12 @@ func file_examples_crud_protobuf_service_proto_rawDescGZIP() []byte {
 var file_examples_crud_protobuf_service_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_examples_crud_protobuf_service_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_examples_crud_protobuf_service_proto_goTypes = []any{
-	(Role)(0),                     // 0: person.Role
-	(IEnum)(0),                    // 1: person.IEnum
-	(*Name)(nil),                  // 2: person.Name
-	(*Address)(nil),               // 3: person.Address
-	(*Contact)(nil),               // 4: person.Contact
-	(*Person)(nil),                // 5: person.Person
+	(PersonIEnum)(0),              // 0: person.PersonIEnum
+	(PersonRolesItems)(0),         // 1: person.PersonRolesItems
+	(*Person)(nil),                // 2: person.Person
+	(*PersonContact)(nil),         // 3: person.PersonContact
+	(*PersonContactAddress)(nil),  // 4: person.PersonContactAddress
+	(*PersonName)(nil),            // 5: person.PersonName
 	(*CreatePersonRequest)(nil),   // 6: person.CreatePersonRequest
 	(*CreatePersonResponse)(nil),  // 7: person.CreatePersonResponse
 	(*GetPersonRequest)(nil),      // 8: person.GetPersonRequest
@@ -987,18 +984,18 @@ var file_examples_crud_protobuf_service_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil), // 16: google.protobuf.Timestamp
 }
 var file_examples_crud_protobuf_service_proto_depIdxs = []int32{
-	3,  // 0: person.Contact.address:type_name -> person.Address
-	2,  // 1: person.Person.name:type_name -> person.Name
-	4,  // 2: person.Person.contact:type_name -> person.Contact
-	0,  // 3: person.Person.roles:type_name -> person.Role
-	16, // 4: person.Person.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 5: person.Person.ienum:type_name -> person.IEnum
-	5,  // 6: person.CreatePersonRequest.person:type_name -> person.Person
-	5,  // 7: person.CreatePersonResponse.person:type_name -> person.Person
-	5,  // 8: person.GetPersonResponse.person:type_name -> person.Person
-	5,  // 9: person.UpdatePersonRequest.person:type_name -> person.Person
-	5,  // 10: person.UpdatePersonResponse.person:type_name -> person.Person
-	5,  // 11: person.ListPersonsResponse.persons:type_name -> person.Person
+	3,  // 0: person.Person.contact:type_name -> person.PersonContact
+	1,  // 1: person.Person.roles:type_name -> person.PersonRolesItems
+	16, // 2: person.Person.createdAt:type_name -> google.protobuf.Timestamp
+	0,  // 3: person.Person.iEnum:type_name -> person.PersonIEnum
+	5,  // 4: person.Person.name:type_name -> person.PersonName
+	4,  // 5: person.PersonContact.address:type_name -> person.PersonContactAddress
+	2,  // 6: person.CreatePersonRequest.person:type_name -> person.Person
+	2,  // 7: person.CreatePersonResponse.person:type_name -> person.Person
+	2,  // 8: person.GetPersonResponse.person:type_name -> person.Person
+	2,  // 9: person.UpdatePersonRequest.person:type_name -> person.Person
+	2,  // 10: person.UpdatePersonResponse.person:type_name -> person.Person
+	2,  // 11: person.ListPersonsResponse.persons:type_name -> person.Person
 	6,  // 12: person.PersonService.CreatePerson:input_type -> person.CreatePersonRequest
 	8,  // 13: person.PersonService.GetPerson:input_type -> person.GetPersonRequest
 	10, // 14: person.PersonService.UpdatePerson:input_type -> person.UpdatePersonRequest
