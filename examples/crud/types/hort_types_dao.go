@@ -2,9 +2,9 @@ package types
 
 type DaoPersonName struct {
   Id_ int64 // Storage Primary Key
-  First string
   Middle string
   Last string
+  First string
 }
 
 type DaoPersonContactAddress struct {
@@ -24,13 +24,13 @@ type DaoPersonContact struct {
 
 type DaoPerson struct {
   Id_ int64 // Storage Primary Key
-  IsActive int32 // bool
-  CreatedAt int64 // DateTime
-  IEnum int32
   Id string // UUID
   NameId_ int64
   Age int64
   ContactId_ int64
+  IsActive int32 // bool
+  CreatedAt int64 // DateTime
+  IEnum int32
 }
 
 type DaoPerson_roles struct {

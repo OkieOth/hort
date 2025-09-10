@@ -23,6 +23,10 @@ type Person struct {
 
   Id_ int64 // Storage Primary Key
 
+	CreatedAt time.Time // DateTime
+
+	IEnum PersonIEnum
+
 	Id string // UUID
 
 	Name PersonName
@@ -34,10 +38,6 @@ type Person struct {
 	Roles []PersonRolesItems
 
 	IsActive bool
-
-	CreatedAt time.Time // DateTime
-
-	IEnum PersonIEnum
 
 }
 
@@ -65,11 +65,11 @@ type PersonContactAddress struct {
 
 type PersonName struct {
 
+	First string
+
 	Middle string
 
 	Last string
-
-	First string
 
 }
 

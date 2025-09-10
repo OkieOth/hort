@@ -25,21 +25,21 @@ enum PersonRolesItems {
 
 message Person {
 
-	PersonContact contact = 1;
+	int32 age = 1;
 
-	repeated PersonRolesItems roles = 2;
+	PersonContact contact = 2;
 
-	bool isActive = 3;
+	repeated PersonRolesItems roles = 3;
 
-	google.protobuf.Timestamp createdAt = 4;
+	bool isActive = 4;
 
-	PersonIEnum iEnum = 5;
+	google.protobuf.Timestamp createdAt = 5;
 
-	string id = 6;
+	PersonIEnum iEnum = 6;
 
-	PersonName name = 7;
+	string id = 7;
 
-	int32 age = 8;
+	PersonName name = 8;
 
 }
 
@@ -67,11 +67,11 @@ message PersonContactAddress {
 
 message PersonName {
 
-	string last = 1;
+	string first = 1;
 
-	string first = 2;
+	string middle = 2;
 
-	string middle = 3;
+	string last = 3;
 
 }
 

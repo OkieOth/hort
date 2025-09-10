@@ -134,14 +134,14 @@ func (PersonRolesItems) EnumDescriptor() ([]byte, []int) {
 
 type Person struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Contact       *PersonContact         `protobuf:"bytes,1,opt,name=contact,proto3" json:"contact,omitempty"`
-	Roles         []PersonRolesItems     `protobuf:"varint,2,rep,packed,name=roles,proto3,enum=person.PersonRolesItems" json:"roles,omitempty"`
-	IsActive      bool                   `protobuf:"varint,3,opt,name=isActive,proto3" json:"isActive,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	IEnum         PersonIEnum            `protobuf:"varint,5,opt,name=iEnum,proto3,enum=person.PersonIEnum" json:"iEnum,omitempty"`
-	Id            string                 `protobuf:"bytes,6,opt,name=id,proto3" json:"id,omitempty"`
-	Name          *PersonName            `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
-	Age           int32                  `protobuf:"varint,8,opt,name=age,proto3" json:"age,omitempty"`
+	Age           int32                  `protobuf:"varint,1,opt,name=age,proto3" json:"age,omitempty"`
+	Contact       *PersonContact         `protobuf:"bytes,2,opt,name=contact,proto3" json:"contact,omitempty"`
+	Roles         []PersonRolesItems     `protobuf:"varint,3,rep,packed,name=roles,proto3,enum=person.PersonRolesItems" json:"roles,omitempty"`
+	IsActive      bool                   `protobuf:"varint,4,opt,name=isActive,proto3" json:"isActive,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	IEnum         PersonIEnum            `protobuf:"varint,6,opt,name=iEnum,proto3,enum=person.PersonIEnum" json:"iEnum,omitempty"`
+	Id            string                 `protobuf:"bytes,7,opt,name=id,proto3" json:"id,omitempty"`
+	Name          *PersonName            `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -174,6 +174,13 @@ func (x *Person) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Person.ProtoReflect.Descriptor instead.
 func (*Person) Descriptor() ([]byte, []int) {
 	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Person) GetAge() int32 {
+	if x != nil {
+		return x.Age
+	}
+	return 0
 }
 
 func (x *Person) GetContact() *PersonContact {
@@ -223,13 +230,6 @@ func (x *Person) GetName() *PersonName {
 		return x.Name
 	}
 	return nil
-}
-
-func (x *Person) GetAge() int32 {
-	if x != nil {
-		return x.Age
-	}
-	return 0
 }
 
 type PersonContact struct {
@@ -362,9 +362,9 @@ func (x *PersonContactAddress) GetCountry() string {
 
 type PersonName struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Last          string                 `protobuf:"bytes,1,opt,name=last,proto3" json:"last,omitempty"`
-	First         string                 `protobuf:"bytes,2,opt,name=first,proto3" json:"first,omitempty"`
-	Middle        string                 `protobuf:"bytes,3,opt,name=middle,proto3" json:"middle,omitempty"`
+	First         string                 `protobuf:"bytes,1,opt,name=first,proto3" json:"first,omitempty"`
+	Middle        string                 `protobuf:"bytes,2,opt,name=middle,proto3" json:"middle,omitempty"`
+	Last          string                 `protobuf:"bytes,3,opt,name=last,proto3" json:"last,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -399,13 +399,6 @@ func (*PersonName) Descriptor() ([]byte, []int) {
 	return file_examples_crud_protobuf_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *PersonName) GetLast() string {
-	if x != nil {
-		return x.Last
-	}
-	return ""
-}
-
 func (x *PersonName) GetFirst() string {
 	if x != nil {
 		return x.First
@@ -416,6 +409,13 @@ func (x *PersonName) GetFirst() string {
 func (x *PersonName) GetMiddle() string {
 	if x != nil {
 		return x.Middle
+	}
+	return ""
+}
+
+func (x *PersonName) GetLast() string {
+	if x != nil {
+		return x.Last
 	}
 	return ""
 }
@@ -881,15 +881,15 @@ var File_examples_crud_protobuf_service_proto protoreflect.FileDescriptor
 const file_examples_crud_protobuf_service_proto_rawDesc = "" +
 	"\n" +
 	"$examples/crud/protobuf/service.proto\x12\x06person\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb4\x02\n" +
-	"\x06Person\x12/\n" +
-	"\acontact\x18\x01 \x01(\v2\x15.person.PersonContactR\acontact\x12.\n" +
-	"\x05roles\x18\x02 \x03(\x0e2\x18.person.PersonRolesItemsR\x05roles\x12\x1a\n" +
-	"\bisActive\x18\x03 \x01(\bR\bisActive\x128\n" +
-	"\tcreatedAt\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
-	"\x05iEnum\x18\x05 \x01(\x0e2\x13.person.PersonIEnumR\x05iEnum\x12\x0e\n" +
-	"\x02id\x18\x06 \x01(\tR\x02id\x12&\n" +
-	"\x04name\x18\a \x01(\v2\x12.person.PersonNameR\x04name\x12\x10\n" +
-	"\x03age\x18\b \x01(\x05R\x03age\"s\n" +
+	"\x06Person\x12\x10\n" +
+	"\x03age\x18\x01 \x01(\x05R\x03age\x12/\n" +
+	"\acontact\x18\x02 \x01(\v2\x15.person.PersonContactR\acontact\x12.\n" +
+	"\x05roles\x18\x03 \x03(\x0e2\x18.person.PersonRolesItemsR\x05roles\x12\x1a\n" +
+	"\bisActive\x18\x04 \x01(\bR\bisActive\x128\n" +
+	"\tcreatedAt\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12)\n" +
+	"\x05iEnum\x18\x06 \x01(\x0e2\x13.person.PersonIEnumR\x05iEnum\x12\x0e\n" +
+	"\x02id\x18\a \x01(\tR\x02id\x12&\n" +
+	"\x04name\x18\b \x01(\v2\x12.person.PersonNameR\x04name\"s\n" +
 	"\rPersonContact\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x126\n" +
@@ -902,10 +902,10 @@ const file_examples_crud_protobuf_service_proto_rawDesc = "" +
 	"postalCode\x12\x18\n" +
 	"\acountry\x18\x04 \x01(\tR\acountry\"N\n" +
 	"\n" +
-	"PersonName\x12\x12\n" +
-	"\x04last\x18\x01 \x01(\tR\x04last\x12\x14\n" +
-	"\x05first\x18\x02 \x01(\tR\x05first\x12\x16\n" +
-	"\x06middle\x18\x03 \x01(\tR\x06middle\"=\n" +
+	"PersonName\x12\x14\n" +
+	"\x05first\x18\x01 \x01(\tR\x05first\x12\x16\n" +
+	"\x06middle\x18\x02 \x01(\tR\x06middle\x12\x12\n" +
+	"\x04last\x18\x03 \x01(\tR\x04last\"=\n" +
 	"\x13CreatePersonRequest\x12&\n" +
 	"\x06person\x18\x01 \x01(\v2\x0e.person.PersonR\x06person\">\n" +
 	"\x14CreatePersonResponse\x12&\n" +

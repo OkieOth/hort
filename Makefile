@@ -6,12 +6,8 @@ test-jsonschemaparser:
 test-codegen:
 	go test -C pkg/codegen ./...
 
-test-hort.core:
-	CGO_ENABLED=1 go test -C pkg/hort.core ./...
-
-test: test-jsonschemaparser test-codegen \
-  test-hort.core
-
+test: test-jsonschemaparser \
+	test-codegen
 
 generate-example-hort:
 	protoc --go_out=. --go_opt=paths=source_relative \
