@@ -4,45 +4,50 @@ import (
 	o "github.com/okieoth/goptional/v3"
 )
 
+type Ordered[T any] struct {
+	Name  string
+	Value T
+}
+
 // This type only covers the main parsed types, that most likely need to be handled
 // in the first place.
 type ParsedSchema struct {
-	ComplexTypes  map[string]ComplexType
-	ArrayTypes    map[string]ArrayType
-	MapTypes      map[string]MapType
-	IntEnums      map[string]IntEnumType
-	StringEnums   map[string]StringEnumType
-	IntegerTypes  map[string]IntegerType
-	NumberTypes   map[string]NumberType
-	StringTypes   map[string]StringType
-	UUIDTypes     map[string]UUIDType
-	DateTypes     map[string]DateType
-	DateTimeTypes map[string]DateTimeType
-	TimeTypes     map[string]TimeType
-	DurationTypes map[string]DurationType
-	BoolTypes     map[string]BoolType
-	BinaryTypes   map[string]BinaryType
-	ObjectTypes   map[string]ObjectType
+	ComplexTypes  []Ordered[ComplexType]
+	ArrayTypes    []Ordered[ArrayType]
+	MapTypes      []Ordered[MapType]
+	IntEnums      []Ordered[IntEnumType]
+	StringEnums   []Ordered[StringEnumType]
+	IntegerTypes  []Ordered[IntegerType]
+	NumberTypes   []Ordered[NumberType]
+	StringTypes   []Ordered[StringType]
+	UUIDTypes     []Ordered[UUIDType]
+	DateTypes     []Ordered[DateType]
+	DateTimeTypes []Ordered[DateTimeType]
+	TimeTypes     []Ordered[TimeType]
+	DurationTypes []Ordered[DurationType]
+	BoolTypes     []Ordered[BoolType]
+	BinaryTypes   []Ordered[BinaryType]
+	ObjectTypes   []Ordered[ObjectType]
 }
 
 func NewParsedSchema() ParsedSchema {
 	return ParsedSchema{
-		ComplexTypes:  make(map[string]ComplexType, 0),
-		ArrayTypes:    make(map[string]ArrayType, 0),
-		MapTypes:      make(map[string]MapType, 0),
-		IntEnums:      make(map[string]IntEnumType, 0),
-		StringEnums:   make(map[string]StringEnumType, 0),
-		IntegerTypes:  make(map[string]IntegerType, 0),
-		NumberTypes:   make(map[string]NumberType, 0),
-		StringTypes:   make(map[string]StringType, 0),
-		UUIDTypes:     make(map[string]UUIDType, 0),
-		DateTypes:     make(map[string]DateType, 0),
-		DateTimeTypes: make(map[string]DateTimeType, 0),
-		TimeTypes:     make(map[string]TimeType, 0),
-		DurationTypes: make(map[string]DurationType, 0),
-		BoolTypes:     make(map[string]BoolType, 0),
-		BinaryTypes:   make(map[string]BinaryType, 0),
-		ObjectTypes:   make(map[string]ObjectType, 0),
+		ComplexTypes:  make([]Ordered[ComplexType], 0),
+		ArrayTypes:    make([]Ordered[ArrayType], 0),
+		MapTypes:      make([]Ordered[MapType], 0),
+		IntEnums:      make([]Ordered[IntEnumType], 0),
+		StringEnums:   make([]Ordered[StringEnumType], 0),
+		IntegerTypes:  make([]Ordered[IntegerType], 0),
+		NumberTypes:   make([]Ordered[NumberType], 0),
+		StringTypes:   make([]Ordered[StringType], 0),
+		UUIDTypes:     make([]Ordered[UUIDType], 0),
+		DateTypes:     make([]Ordered[DateType], 0),
+		DateTimeTypes: make([]Ordered[DateTimeType], 0),
+		TimeTypes:     make([]Ordered[TimeType], 0),
+		DurationTypes: make([]Ordered[DurationType], 0),
+		BoolTypes:     make([]Ordered[BoolType], 0),
+		BinaryTypes:   make([]Ordered[BinaryType], 0),
+		ObjectTypes:   make([]Ordered[ObjectType], 0),
 	}
 }
 
