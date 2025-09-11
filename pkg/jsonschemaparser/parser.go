@@ -213,13 +213,9 @@ func parseTopLevelType(parsedSchema *ordered.OrderedValue, alreadyExtractedTypes
 }
 
 func parseTypesFromDefinition(definitionsMap ordered.OrderedObject, alreadyExtractedTypes *types.ParsedSchema) error {
-	for i, v := range definitionsMap {
+	for _, v := range definitionsMap {
 		typeName := v.Key
-		valuesMap, ok := v.Value.Value.(ordered.OrderedObject)
-		if !ok {
-			return fmt.Errorf("entry in definitions map, isn't a map type")
-		}
-		_, err := extractType(typeName, valuesMap, alreadyExtractedTypes, true)
+		_, err := extractType(typeName, v.Value, alreadyExtractedTypes, true)
 		if err != nil {
 			return fmt.Errorf("error while extracting type: %v", err)
 		}
@@ -283,20 +279,20 @@ func extractEnumType(name string, alreadyExtractedTypes *types.ParsedSchema, enu
 					Name:   name,
 					Values: toIntArray(a),
 				}
-				if _, exist := alreadyExtractedTypes.IntEnums[name]; exist {
-					return types.StringEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
+				if _, exist := alreadyExtractedTypes.GetIntEnumByName(name); exist {
+					return types.IntEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
 				}
-				alreadyExtractedTypes.IntEnums[name] = newType
+				alreadyExtractedTypes.AddIntEnum(name, newType)
 				return newType, nil
 			} else if _, isStr := a[0].(string); isStr {
 				newType := types.StringEnumType{
 					Name:   name,
 					Values: toStringArray(a),
 				}
-				if _, exist := alreadyExtractedTypes.StringEnums[name]; exist {
+				if _, exist := alreadyExtractedTypes.GetStringEnumByName(name); exist {
 					return types.StringEnumType{}, fmt.Errorf("string enum with name already exist: %s", name)
 				}
-				alreadyExtractedTypes.StringEnums[name] = newType
+				alreadyExtractedTypes.AddStringEnum(name, newType)
 				return newType, nil
 			} else if _, isFloat := a[0].(float64); isFloat {
 				// int values are read as numbers by go ... that means float64
@@ -304,10 +300,10 @@ func extractEnumType(name string, alreadyExtractedTypes *types.ParsedSchema, enu
 					Name:   name,
 					Values: toIntArray(a),
 				}
-				if _, exist := alreadyExtractedTypes.IntEnums[name]; exist {
+				if _, exist := alreadyExtractedTypes.GetIntEnumByName(name); exist {
 					return types.StringEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
 				}
-				alreadyExtractedTypes.IntEnums[name] = newType
+				alreadyExtractedTypes.AddIntEnum(name, newType)
 				return newType, nil
 			} else {
 				return types.StringEnumType{}, fmt.Errorf("unknown array entry for enum type with name: %s, type: %v", name, reflect.TypeOf(a[0]))
@@ -327,52 +323,52 @@ func extractRefType(name string, alreadyExtractedTypes *types.ParsedSchema, refS
 		return types.DummyType{}, fmt.Errorf("refStr has no '/', seems to have the wrong format: %s, type: %s", refStr, name)
 	}
 	typeName := refStr[lastSlash+1:]
-	if t, exist := alreadyExtractedTypes.ComplexTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetComplexTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.StringEnums[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetStringEnumByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.IntEnums[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetIntEnumByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.ArrayTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetArrayTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.MapTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetMapTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.IntegerTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetIntegerTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.NumberTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetNumberTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.StringTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetStringTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.UUIDTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetUUIDTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.DateTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetDateTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.DateTimeTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetDateTimeTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.TimeTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetTimeTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.DurationTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetDurationTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.BoolTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetBoolTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.BinaryTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetBinaryTypeByName(typeName); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.ObjectTypes[typeName]; exist {
+	if t, exist := alreadyExtractedTypes.GetObjectTypeByName(typeName); exist {
 		return t, nil
 	}
 	return types.DummyType{
@@ -401,44 +397,36 @@ func extractNormalType(name string, valuesMap *ordered.OrderedValue, alreadyExtr
 }
 
 func getOptionalString(key string, valuesMap *ordered.OrderedValue, allowed []string) o.Optional[string] {
-	if f, ok := valuesMap[key]; ok {
-		if s, isStr := f.(string); isStr {
-			if allowed == nil || slices.Contains(allowed, s) {
-				return o.NewOptionalValue(s)
-			}
+	if s, ok := valuesMap.StringValueForKey(key); ok {
+		if allowed == nil || slices.Contains(allowed, s) {
+			return o.NewOptionalValue(s)
 		}
 	}
 	return o.NewOptional[string]()
 }
 
 func getOptionalInt(key string, valuesMap *ordered.OrderedValue, allowed []int) o.Optional[int] {
-	if f, ok := valuesMap[key]; ok {
-		if v, isStr := f.(float64); isStr { // needs to be float64, because JSON only now numbers by default
-			s := int(v)
-			if allowed == nil || slices.Contains(allowed, s) {
-				return o.NewOptionalValue(s)
-			}
+	if f, ok := valuesMap.FloatValueForKey(key); ok {
+		s := int(f)
+		if allowed == nil || slices.Contains(allowed, s) {
+			return o.NewOptionalValue(s)
 		}
 	}
 	return o.NewOptional[int]()
 }
 
 func getOptionalNumber(key string, valuesMap *ordered.OrderedValue, allowed []float64) o.Optional[float64] {
-	if f, ok := valuesMap[key]; ok {
-		if v, isStr := f.(float64); isStr { // needs to be float64, because JSON only now numbers by default
-			if allowed == nil || slices.Contains(allowed, v) {
-				return o.NewOptionalValue(v)
-			}
+	if f, ok := valuesMap.FloatValueForKey(key); ok {
+		if allowed == nil || slices.Contains(allowed, f) {
+			return o.NewOptionalValue(f)
 		}
 	}
 	return o.NewOptional[float64]()
 }
 
 func getOptionalBool(key string, valuesMap *ordered.OrderedValue) o.Optional[bool] {
-	if f, ok := valuesMap[key]; ok {
-		if v, isBool := f.(bool); isBool {
-			return o.NewOptionalValue(v)
-		}
+	if b, ok := valuesMap.BoolValueForKey(key); ok {
+		return o.NewOptionalValue(b)
 	}
 	return o.NewOptional[bool]()
 }
@@ -464,11 +452,11 @@ func extractIntegerType(name string, valuesMap *ordered.OrderedValue, alreadyExt
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.IntegerTypes[name]
+		_, exist := alreadyExtractedTypes.GetIntegerTypeByName(name)
 		if exist {
 			return intType, fmt.Errorf("can't add int type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.IntegerTypes[name] = intType
+		alreadyExtractedTypes.AddIntegerType(name, intType)
 	}
 	return intType, nil
 }
@@ -485,11 +473,11 @@ func extractNumberType(name string, valuesMap *ordered.OrderedValue, alreadyExtr
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.NumberTypes[name]
+		_, exist := alreadyExtractedTypes.GetNumberTypeByName(name)
 		if exist {
 			return numberType, fmt.Errorf("can't add float type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.NumberTypes[name] = numberType
+		alreadyExtractedTypes.AddNumberType(name, numberType)
 	}
 	return numberType, nil
 }
@@ -500,11 +488,11 @@ func extractBooleanType(name string, valuesMap *ordered.OrderedValue, alreadyExt
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.BoolTypes[name]
+		_, exist := alreadyExtractedTypes.GetBoolTypeByName(name)
 		if exist {
 			return boolType, fmt.Errorf("can't add bool type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.BoolTypes[name] = boolType
+		alreadyExtractedTypes.AddBoolType(name, boolType)
 	}
 	return boolType, nil
 }
@@ -540,11 +528,11 @@ func extractDateType(name string, valuesMap *ordered.OrderedValue, alreadyExtrac
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.DateTypes[name]
+		_, exist := alreadyExtractedTypes.GetDateTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add date type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.DateTypes[name] = t
+		alreadyExtractedTypes.AddDateType(name, t)
 	}
 	return t, nil
 }
@@ -560,11 +548,11 @@ func extractTimeType(name string, valuesMap *ordered.OrderedValue, alreadyExtrac
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.TimeTypes[name]
+		_, exist := alreadyExtractedTypes.GetTimeTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add time type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.TimeTypes[name] = t
+		alreadyExtractedTypes.AddTimeType(name, t)
 	}
 	return t, nil
 }
@@ -580,11 +568,11 @@ func extractDateTimeType(name string, valuesMap *ordered.OrderedValue, alreadyEx
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.DateTimeTypes[name]
+		_, exist := alreadyExtractedTypes.GetDateTimeTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add date-time type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.DateTimeTypes[name] = t
+		alreadyExtractedTypes.AddDateTimeType(name, t)
 	}
 	return t, nil
 }
@@ -596,11 +584,11 @@ func extractUuidType(name string, valuesMap *ordered.OrderedValue, alreadyExtrac
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.UUIDTypes[name]
+		_, exist := alreadyExtractedTypes.GetUUIDTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add uuid type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.UUIDTypes[name] = t
+		alreadyExtractedTypes.AddUUIDType(name, t)
 	}
 	return t, nil
 }
@@ -612,11 +600,11 @@ func extractDurationType(name string, valuesMap *ordered.OrderedValue, alreadyEx
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.DurationTypes[name]
+		_, exist := alreadyExtractedTypes.GetDurationTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add duration type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.DurationTypes[name] = t
+		alreadyExtractedTypes.AddDurationType(name, t)
 	}
 	return t, nil
 }
@@ -627,11 +615,11 @@ func extractBinaryType(name string, valuesMap *ordered.OrderedValue, alreadyExtr
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.BinaryTypes[name]
+		_, exist := alreadyExtractedTypes.GetBinaryTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add binary type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.BinaryTypes[name] = t
+		alreadyExtractedTypes.AddBinaryType(name, t)
 	}
 	return t, nil
 }
@@ -647,22 +635,18 @@ func extractPureStringType(name string, valuesMap *ordered.OrderedValue, already
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.StringTypes[name]
+		_, exist := alreadyExtractedTypes.GetStringTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add string type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.StringTypes[name] = t
+		alreadyExtractedTypes.AddStringType(name, t)
 	}
 	return t, nil
 }
 
 func getValueType(name, key string, valuesMap *ordered.OrderedValue, alreadyExtractedTypes *types.ParsedSchema) (any, error) {
-	if f, ok := valuesMap[key]; ok {
-		if v, isMap := f.(map[string]any); isMap {
-			return extractType(name, v, alreadyExtractedTypes, false)
-		} else {
-			return types.DummyType{}, fmt.Errorf("given key is no map type (key: %s)", key)
-		}
+	if v, ok := valuesMap.ValueForKey(key); ok {
+		return extractType(name, v, alreadyExtractedTypes, false)
 	} else {
 		return types.DummyType{}, fmt.Errorf("couldn't find key to extract the value type")
 	}
@@ -683,11 +667,11 @@ func extractArrayType(name string, valuesMap *ordered.OrderedValue, alreadyExtra
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.ArrayTypes[name]
+		_, exist := alreadyExtractedTypes.GetArrayTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add Array type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.ArrayTypes[name] = t
+		alreadyExtractedTypes.AddArrayType(name, t)
 	}
 	return t, nil
 }
@@ -734,11 +718,11 @@ func extractComplexType(name string, propertiesMap map[string]any, description o
 		Properties:  properties,
 	}
 	// only the case for toplevel types
-	_, exist := alreadyExtractedTypes.ComplexTypes[name]
+	_, exist := alreadyExtractedTypes.GetComplexTypeByName(name)
 	if exist {
 		return t, fmt.Errorf("can't add Array type, because a type with the same name already exists, name: %s", name)
 	}
-	alreadyExtractedTypes.ComplexTypes[name] = t
+	alreadyExtractedTypes.AddComplexType(name, t)
 	return t, nil
 }
 
@@ -756,11 +740,11 @@ func extractMapType(name string, propertiesMap map[string]any, description o.Opt
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.MapTypes[name]
+		_, exist := alreadyExtractedTypes.GetMapTypeByName(name)
 		if exist {
 			return t, fmt.Errorf("can't add map type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.MapTypes[name] = t
+		alreadyExtractedTypes.AddMapType(name, t)
 	}
 	return t, nil
 }
@@ -786,7 +770,7 @@ func extractObjectType(name string, valuesMap *ordered.OrderedValue, alreadyExtr
 			a, err := extractComplexType(name, m, description, alreadyExtractedTypes, topLevel)
 			a.Tags = getTags(valuesMap)
 			if len(a.Tags) > 0 {
-				alreadyExtractedTypes.ComplexTypes[a.Name] = a
+				alreadyExtractedTypes.AddComplexType(a.Name, a)
 			}
 			return a, err
 		} else {

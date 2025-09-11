@@ -75,6 +75,28 @@ func (ov *OrderedValue) StringValueForKey(key string) (string, bool) {
 	return "", false
 }
 
+func (ov *OrderedValue) FloatValueForKey(key string) (float64, bool) {
+	if v, found := ov.ValueForKey(key); found {
+		if v.Type == NUMBER {
+			if s, ok := v.Value.(float64); ok {
+				return s, true
+			}
+		}
+	}
+	return 0, false
+}
+
+func (ov *OrderedValue) BoolValueForKey(key string) (bool, bool) {
+	if v, found := ov.ValueForKey(key); found {
+		if v.Type == BOOL {
+			if s, ok := v.Value.(bool); ok {
+				return s, true
+			}
+		}
+	}
+	return false, false
+}
+
 func (ov *OrderedValue) ArrayValueForKey(key string) (OrderedArray, bool) {
 	if v, found := ov.ValueForKey(key); found {
 		if v.Type == ARRAY {
