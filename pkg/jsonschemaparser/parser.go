@@ -1,7 +1,6 @@
 package jsonschemaparser
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"slices"
@@ -10,6 +9,7 @@ import (
 	"unicode"
 
 	o "github.com/okieoth/goptional/v3"
+	omap "github.com/okieoth/gordered-map"
 	"github.com/okieoth/hort/pkg/jsonschemaparser/types"
 )
 
@@ -20,33 +20,29 @@ func ignoreIfEmptyStr(s string) bool {
 }
 
 func ParseBytes(input []byte) (types.ParsedSchema, error) {
-	var parsedSchema map[string]any
 	extractedTypes := types.NewParsedSchema()
 
-	if err := json.Unmarshal(input, &parsedSchema); err != nil {
+	mapThing, err := omap.NewFromJSON(input)
+	if err != nil {
 		return extractedTypes, fmt.Errorf("error while unmarshalling schema: %v", err)
 	}
 
-	var definitions any
+	var definitions *omap.MapThing
 	var found bool
-	definitions, found = parsedSchema["definitions"]
+	definitions, found = omap.GetChildMap(mapThing, "definitions")
 	if !found {
 		// respects json schema draft 2020-12
-		definitions, found = parsedSchema["$defs"]
+		definitions, found = omap.GetChildMap(mapThing, "$defs")
 	}
 	if found {
-		definitionsMap, ok := definitions.(map[string]any)
-		if !ok {
-			return extractedTypes, fmt.Errorf("error while converting to definitions map")
-		}
-		err := parseTypesFromDefinition(definitionsMap, &extractedTypes)
+		err := parseTypesFromDefinition(definitions, &extractedTypes)
 		if err != nil {
 			return extractedTypes, fmt.Errorf("error while parsing types in the definitions section: %v", err)
 		}
 	}
 
 	// to level object
-	err := parseTopLevelType(parsedSchema, &extractedTypes)
+	err = parseTopLevelType(mapThing, &extractedTypes)
 	if err != nil {
 		return extractedTypes, fmt.Errorf("error while parsing main type: %v", err)
 	}
@@ -65,62 +61,72 @@ func ParseBytes(input []byte) (types.ParsedSchema, error) {
 	return extractedTypes, nil
 }
 
-func getTypeByNameFromMap[T any](nameToFind string, mapToCheck map[string]T) (any, bool) {
-	for name, t := range mapToCheck {
-		if name == nameToFind {
+func getTypeByNameImpl[T types.NamedObject](nameToFind string, toCheck []T) (any, bool) {
+	for _, t := range toCheck {
+		if t.GetName() == nameToFind {
 			return t, true
 		}
 	}
 	return types.DummyType{}, false
 }
 
+func replaceOrAddTypeByName[T types.NamedObject](nameToFind string, toCheck []T, newObj T) []T {
+	for i, t := range toCheck {
+		if t.GetName() == nameToFind {
+			(toCheck)[i] = newObj
+			return toCheck
+		}
+	}
+	return append(toCheck, newObj)
+}
+
 func getTypeByName(extractedTypes *types.ParsedSchema, typeName string) (any, error) {
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.StringEnums); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.StringEnums); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.ComplexTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.ComplexTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.IntEnums); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.IntEnums); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.ArrayTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.ArrayTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.MapTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.MapTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.IntegerTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.IntegerTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.NumberTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.NumberTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.StringTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.StringTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.UUIDTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.UUIDTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.DateTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.DateTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.DateTimeTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.DateTimeTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.TimeTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.TimeTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.DurationTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.DurationTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.BoolTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.BoolTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.BinaryTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.BinaryTypes); found {
 		return t, nil
 	}
-	if t, found := getTypeByNameFromMap(typeName, extractedTypes.ObjectTypes); found {
+	if t, found := getTypeByNameImpl(typeName, extractedTypes.ObjectTypes); found {
 		return t, nil
 	}
 	return types.DummyType{}, fmt.Errorf("couldn't find type with name: %s", typeName)
@@ -197,17 +203,13 @@ func ToProperName(input string) string {
 	return result.String()
 }
 
-func parseTopLevelType(parsedSchema map[string]any, alreadyExtractedTypes *types.ParsedSchema) error {
+func parseTopLevelType(parsedSchema *omap.MapThing, alreadyExtractedTypes *types.ParsedSchema) error {
 	if !hasToplevelType(parsedSchema) {
 		return nil
 	}
 	var typeName string
-	if titleEntry, ok := parsedSchema["title"]; ok {
-		if t, ok := titleEntry.(string); !ok {
-			return fmt.Errorf("title entry of the schema isn't a string")
-		} else {
-			typeName = ToProperName(t)
-		}
+	if titleStr, ok := omap.GetValue[string](parsedSchema, "title"); ok {
+		typeName = ToProperName(titleStr)
 	} else {
 		currentDate := time.Now().Format("20060102")
 		typeName = "UnknownTitle_" + currentDate
@@ -230,22 +232,22 @@ func parseTypesFromDefinition(definitionsMap map[string]any, alreadyExtractedTyp
 	return nil
 }
 
-func hasToplevelType(valuesMap map[string]any) bool {
-	if _, ok := valuesMap["enum"]; ok {
+func hasToplevelType(valuesMap *omap.MapThing) bool {
+	if omap.HasValue(valuesMap, "enum") {
 		// found enum entry
 		return true
-	} else if _, ok := valuesMap["$ref"]; ok {
+	} else if omap.HasValue(valuesMap, "$ref") {
 		// found ref entry
 		return true
-	} else if _, ok := valuesMap["type"]; ok {
+	} else if omap.HasValue(valuesMap, "type") {
 		// found type entry
 		return true
 	}
 	return false
 }
 
-func extractType(name string, valuesMap map[string]any, alreadyExtractedTypes *types.ParsedSchema, topLevel bool) (any, error) {
-	if v, ok := valuesMap["enum"]; ok {
+func extractType(name string, valuesMap *omap.MapThing, alreadyExtractedTypes *types.ParsedSchema, topLevel bool) (any, error) {
+	if v, ok := omap.GetAnyTypedChildArray(valuesMap, "enum"); ok {
 		// found enum entry
 		return extractEnumType(name, alreadyExtractedTypes, v)
 	} else if r, ok := valuesMap["$ref"]; ok {
@@ -292,48 +294,44 @@ func toIntArray(a []any) []int {
 	return ret
 }
 
-func extractEnumType(name string, alreadyExtractedTypes *types.ParsedSchema, enumValues any) (any, error) {
-	if a, ok := enumValues.([]any); ok {
-		if len(a) > 0 {
-			if _, isInt := a[0].(int); isInt {
-				newType := types.IntEnumType{
-					Name:   name,
-					Values: toIntArray(a),
-				}
-				if _, exist := alreadyExtractedTypes.IntEnums[name]; exist {
-					return types.StringEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
-				}
-				alreadyExtractedTypes.IntEnums[name] = newType
-				return newType, nil
-			} else if _, isStr := a[0].(string); isStr {
-				newType := types.StringEnumType{
-					Name:   name,
-					Values: toStringArray(a),
-				}
-				if _, exist := alreadyExtractedTypes.StringEnums[name]; exist {
-					return types.StringEnumType{}, fmt.Errorf("string enum with name already exist: %s", name)
-				}
-				alreadyExtractedTypes.StringEnums[name] = newType
-				return newType, nil
-			} else if _, isFloat := a[0].(float64); isFloat {
-				// int values are read as numbers by go ... that means float64
-				newType := types.IntEnumType{
-					Name:   name,
-					Values: toIntArray(a),
-				}
-				if _, exist := alreadyExtractedTypes.IntEnums[name]; exist {
-					return types.StringEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
-				}
-				alreadyExtractedTypes.IntEnums[name] = newType
-				return newType, nil
-			} else {
-				return types.StringEnumType{}, fmt.Errorf("unknown array entry for enum type with name: %s, type: %v", name, reflect.TypeOf(a[0]))
+func extractEnumType(name string, alreadyExtractedTypes *types.ParsedSchema, enumValues []any) (any, error) {
+	if len(enumValues) > 0 {
+		if _, isInt := enumValues[0].(int); isInt {
+			newType := types.IntEnumType{
+				Name:   name,
+				Values: toIntArray(enumValues),
 			}
+			if _, exist := getTypeByNameImpl(name, alreadyExtractedTypes.IntEnums); exist {
+				return types.StringEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
+			}
+			alreadyExtractedTypes.IntEnums = append(alreadyExtractedTypes.IntEnums, newType)
+			return newType, nil
+		} else if _, isStr := enumValues[0].(string); isStr {
+			newType := types.StringEnumType{
+				Name:   name,
+				Values: toStringArray(enumValues),
+			}
+			if _, exist := getTypeByNameImpl(name, alreadyExtractedTypes.StringEnums); exist {
+				return types.StringEnumType{}, fmt.Errorf("string enum with name already exist: %s", name)
+			}
+			alreadyExtractedTypes.StringEnums = append(alreadyExtractedTypes.StringEnums, newType)
+			return newType, nil
+		} else if _, isFloat := enumValues[0].(float64); isFloat {
+			// int values are read as numbers by go ... that means float64
+			newType := types.IntEnumType{
+				Name:   name,
+				Values: toIntArray(enumValues),
+			}
+			if _, exist := getTypeByNameImpl(name, alreadyExtractedTypes.IntEnums); exist {
+				return types.StringEnumType{}, fmt.Errorf("int enum with name already exist: %s", name)
+			}
+			alreadyExtractedTypes.IntEnums = append(alreadyExtractedTypes.IntEnums, newType)
+			return newType, nil
 		} else {
-			return types.StringEnumType{}, fmt.Errorf("enum array entry has len 0 for enum type with name: %s", name)
+			return types.StringEnumType{}, fmt.Errorf("unknown array entry for enum type with name: %s, type: %v", name, reflect.TypeOf(a[0]))
 		}
 	} else {
-		return types.StringEnumType{}, fmt.Errorf("no array entry for enum type with name: %s", name)
+		return types.StringEnumType{}, fmt.Errorf("enum array entry has len 0 for enum type with name: %s", name)
 	}
 }
 
@@ -344,52 +342,52 @@ func extractRefType(name string, alreadyExtractedTypes *types.ParsedSchema, refS
 		return types.DummyType{}, fmt.Errorf("refStr has no '/', seems to have the wrong format: %s, type: %s", refStr, name)
 	}
 	typeName := refStr[lastSlash+1:]
-	if t, exist := alreadyExtractedTypes.ComplexTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.ComplexTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.StringEnums[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.StringEnums); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.IntEnums[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.IntEnums); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.ArrayTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.ArrayTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.MapTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.MapTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.IntegerTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.IntegerTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.NumberTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.NumberTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.StringTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.StringTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.UUIDTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.UUIDTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.DateTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.DateTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.DateTimeTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.DateTimeTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.TimeTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.TimeTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.DurationTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.DurationTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.BoolTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.BoolTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.BinaryTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.BinaryTypes); exist {
 		return t, nil
 	}
-	if t, exist := alreadyExtractedTypes.ObjectTypes[typeName]; exist {
+	if t, exist := getTypeByNameImpl(typeName, alreadyExtractedTypes.ObjectTypes); exist {
 		return t, nil
 	}
 	return types.DummyType{
@@ -481,11 +479,11 @@ func extractIntegerType(name string, valuesMap map[string]any, alreadyExtractedT
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.IntegerTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.IntegerTypes)
 		if exist {
 			return intType, fmt.Errorf("can't add int type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.IntegerTypes[name] = intType
+		alreadyExtractedTypes.IntegerTypes = append(alreadyExtractedTypes.IntegerTypes, intType)
 	}
 	return intType, nil
 }
@@ -502,11 +500,11 @@ func extractNumberType(name string, valuesMap map[string]any, alreadyExtractedTy
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.NumberTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.NumberTypes)
 		if exist {
 			return numberType, fmt.Errorf("can't add float type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.NumberTypes[name] = numberType
+		alreadyExtractedTypes.NumberTypes = append(alreadyExtractedTypes.NumberTypes, numberType)
 	}
 	return numberType, nil
 }
@@ -517,11 +515,11 @@ func extractBooleanType(name string, valuesMap map[string]any, alreadyExtractedT
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.BoolTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.BoolTypes)
 		if exist {
 			return boolType, fmt.Errorf("can't add bool type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.BoolTypes[name] = boolType
+		alreadyExtractedTypes.BoolTypes = append(alreadyExtractedTypes.BoolTypes, boolType)
 	}
 	return boolType, nil
 }
@@ -557,11 +555,11 @@ func extractDateType(name string, valuesMap map[string]any, alreadyExtractedType
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.DateTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.DateTypes)
 		if exist {
 			return t, fmt.Errorf("can't add date type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.DateTypes[name] = t
+		alreadyExtractedTypes.DateTypes = append(alreadyExtractedTypes.DateTypes, t)
 	}
 	return t, nil
 }
@@ -577,11 +575,11 @@ func extractTimeType(name string, valuesMap map[string]any, alreadyExtractedType
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.TimeTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.TimeTypes)
 		if exist {
 			return t, fmt.Errorf("can't add time type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.TimeTypes[name] = t
+		alreadyExtractedTypes.TimeTypes = append(alreadyExtractedTypes.TimeTypes, t)
 	}
 	return t, nil
 }
@@ -597,11 +595,11 @@ func extractDateTimeType(name string, valuesMap map[string]any, alreadyExtracted
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.DateTimeTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.DateTimeTypes)
 		if exist {
 			return t, fmt.Errorf("can't add date-time type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.DateTimeTypes[name] = t
+		alreadyExtractedTypes.DateTimeTypes = append(alreadyExtractedTypes.DateTimeTypes, t)
 	}
 	return t, nil
 }
@@ -613,11 +611,11 @@ func extractUuidType(name string, valuesMap map[string]any, alreadyExtractedType
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.UUIDTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.UUIDTypes)
 		if exist {
 			return t, fmt.Errorf("can't add uuid type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.UUIDTypes[name] = t
+		alreadyExtractedTypes.UUIDTypes = append(alreadyExtractedTypes.UUIDTypes, t)
 	}
 	return t, nil
 }
@@ -629,11 +627,11 @@ func extractDurationType(name string, valuesMap map[string]any, alreadyExtracted
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.DurationTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.DurationTypes)
 		if exist {
 			return t, fmt.Errorf("can't add duration type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.DurationTypes[name] = t
+		alreadyExtractedTypes.DurationTypes = append(alreadyExtractedTypes.DurationTypes, t)
 	}
 	return t, nil
 }
@@ -644,11 +642,11 @@ func extractBinaryType(name string, valuesMap map[string]any, alreadyExtractedTy
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.BinaryTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.BinaryTypes)
 		if exist {
 			return t, fmt.Errorf("can't add binary type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.BinaryTypes[name] = t
+		alreadyExtractedTypes.BinaryTypes = append(alreadyExtractedTypes.BinaryTypes, t)
 	}
 	return t, nil
 }
@@ -664,11 +662,11 @@ func extractPureStringType(name string, valuesMap map[string]any, alreadyExtract
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.StringTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.StringTypes)
 		if exist {
 			return t, fmt.Errorf("can't add string type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.StringTypes[name] = t
+		alreadyExtractedTypes.StringTypes = append(alreadyExtractedTypes.StringTypes, t)
 	}
 	return t, nil
 }
@@ -700,11 +698,11 @@ func extractArrayType(name string, valuesMap map[string]any, alreadyExtractedTyp
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.ArrayTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.ArrayTypes)
 		if exist {
 			return t, fmt.Errorf("can't add Array type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.ArrayTypes[name] = t
+		alreadyExtractedTypes.ArrayTypes = append(alreadyExtractedTypes.ArrayTypes, t)
 	}
 	return t, nil
 }
@@ -751,11 +749,11 @@ func extractComplexType(name string, propertiesMap map[string]any, description o
 		Properties:  properties,
 	}
 	// only the case for toplevel types
-	_, exist := alreadyExtractedTypes.ComplexTypes[name]
+	_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.ComplexTypes)
 	if exist {
 		return t, fmt.Errorf("can't add Array type, because a type with the same name already exists, name: %s", name)
 	}
-	alreadyExtractedTypes.ComplexTypes[name] = t
+	alreadyExtractedTypes.ComplexTypes = append(alreadyExtractedTypes.ComplexTypes, t)
 	return t, nil
 }
 
@@ -773,11 +771,11 @@ func extractMapType(name string, propertiesMap map[string]any, description o.Opt
 	}
 	if topLevel && name != "" {
 		// only the case for toplevel types
-		_, exist := alreadyExtractedTypes.MapTypes[name]
+		_, exist := getTypeByNameImpl(name, alreadyExtractedTypes.MapTypes)
 		if exist {
 			return t, fmt.Errorf("can't add map type, because a type with the same name already exists, name: %s", name)
 		}
-		alreadyExtractedTypes.MapTypes[name] = t
+		alreadyExtractedTypes.MapTypes = append(alreadyExtractedTypes.MapTypes, t)
 	}
 	return t, nil
 }
@@ -803,7 +801,7 @@ func extractObjectType(name string, valuesMap map[string]any, alreadyExtractedTy
 			a, err := extractComplexType(name, m, description, alreadyExtractedTypes, topLevel)
 			a.Tags = getTags(valuesMap)
 			if len(a.Tags) > 0 {
-				alreadyExtractedTypes.ComplexTypes[a.Name] = a
+				alreadyExtractedTypes.ComplexTypes = replaceOrAddTypeByName(a.Name, alreadyExtractedTypes.ComplexTypes, a)
 			}
 			return a, err
 		} else {
