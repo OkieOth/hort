@@ -1,0 +1,33 @@
+package {{ .PackageName }}
+
+{{- range $index, $complexType := .ComplexTypes }}
+
+type Dao{{ $complexType.Type.Name }} struct {
+  Id_ int64 // Storage Primary Key
+  {{- range $complexType.Type.Properties }}
+    {{- if isNeitherMapNorArray .ValueType }}
+  {{ upperFirstCase .Name }}{{ refPrefixIfNeeded .ValueType "Id_" }} {{ getDaoType .ValueType }}
+    {{- end }}
+  {{- end }}
+}
+
+{{- range $indexA, $container := $complexType.ArrayTypes }}
+
+type Dao{{ $complexType.Type.Name }}_{{ $container.PropName }} struct {
+  Id_ int64 // Storage Primary Key
+  {{ upperFirstCase $complexType.Type.Name }}Id_ int64 // Reference to the parent entry
+  {{ getUpperContainerName $container.ValueType }}{{ refPrefixIfNeeded .ValueType "Id_" }} {{ getDaoType $container.ValueType }}
+}
+
+{{- end }}
+{{- range $indexA, $container := $complexType.MapTypes }}
+
+type Dao{{ $complexType.Type.Name }}_{{ $container.PropName }} struct {
+  Id_ int64 // Storage Primary Key
+  {{ upperFirstCase $complexType.Type.Name }}Id_ int64 // Reference to the parent entry
+  key string
+  {{ getUpperContainerName $container.ValueType }}{{ refPrefixIfNeeded .ValueType "Id_" }} {{ getDaoType $container.ValueType }}
+}
+
+{{- end }}
+{{- end }}

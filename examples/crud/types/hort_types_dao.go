@@ -1,0 +1,40 @@
+package types
+
+type DaoPersonName struct {
+  Id_ int64 // Storage Primary Key
+  First string
+  Middle string
+  Last string
+}
+
+type DaoPersonContactAddress struct {
+  Id_ int64 // Storage Primary Key
+  Street string
+  City string
+  PostalCode string
+  Country string
+}
+
+type DaoPersonContact struct {
+  Id_ int64 // Storage Primary Key
+  Email string
+  Phone string
+  AddressId_ int64
+}
+
+type DaoPerson struct {
+  Id_ int64 // Storage Primary Key
+  Id string // UUID
+  NameId_ int64
+  Age int64
+  ContactId_ int64
+  IsActive int32 // bool
+  CreatedAt int64 // DateTime
+  IEnum int32
+}
+
+type DaoPerson_roles struct {
+  Id_ int64 // Storage Primary Key
+  PersonId_ int64 // Reference to the parent entry
+  Value string
+}

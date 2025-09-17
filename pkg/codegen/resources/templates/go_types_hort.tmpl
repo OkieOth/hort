@@ -30,6 +30,10 @@ const (
 
 {{ range $index, $type := .Schema.ComplexTypes -}}
 type {{ $type.Name }} struct {
+{{- if typeHasTag $type "hort.main-type" }}
+
+  Id_ int64 // Storage Primary Key
+{{- end }}
 {{ range $type.Properties }}
 	{{ upperFirstCase .Name }} {{ getGolangType .Name .ValueType }}
 {{ end }}
