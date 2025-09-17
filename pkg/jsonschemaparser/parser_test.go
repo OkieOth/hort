@@ -1,7 +1,6 @@
 package jsonschemaparser_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -34,23 +33,27 @@ func TestParseBytes(t *testing.T) {
 	require.Equal(t, 0, len(result.BinaryTypes))
 	require.Equal(t, 0, len(result.ObjectTypes))
 
-	_, exist := result.ComplexTypes["PersonName"]
+	_, exist := p.GetTypeByNameFromList("PersonName", result.ComplexTypes)
 	require.True(t, exist, "PersonName doesn't exist")
 
-	_, exist = result.ComplexTypes["PersonContact"]
+	_, exist = p.GetTypeByNameFromList("PersonContact", result.ComplexTypes)
 	require.True(t, exist, "PersonContact doesn't exist")
 
-	personContactAddress, exist := result.ComplexTypes["PersonContactAddress"]
+	personContactAddress, exist := p.GetTypeByNameFromList("PersonContactAddress", result.ComplexTypes)
 	require.True(t, exist, "PersonContactAddress doesn't exist")
-	require.Equal(t, 0, len(personContactAddress.Tags))
+	ct, ok := personContactAddress.(types.ComplexType)
+	require.True(t, ok, "error while casting to complex type")
+	require.Equal(t, 0, len(ct.Tags))
 
-	_, exist = result.StringEnums["PersonRolesItems"]
+	_, exist = p.GetTypeByNameFromList("PersonRolesItems", result.StringEnums)
 	require.True(t, exist, "PersonRolesItems doesn't exist")
 
-	p, exist := result.ComplexTypes["Person"]
+	p, exist := p.GetTypeByNameFromList("Person", result.ComplexTypes)
 	require.True(t, exist, "Person doesn't exist")
-	require.Equal(t, 1, len(p.Tags))
-	require.Equal(t, "hort.main-type", p.Tags[0])
+	ct, ok = p.(types.ComplexType)
+	require.True(t, ok, "error while casting to complex type")
+	require.Equal(t, 1, len(ct.Tags))
+	require.Equal(t, "hort.main-type", ct.Tags[0])
 }
 
 func TestParseBytesWithRefs(t *testing.T) {
@@ -75,25 +78,23 @@ func TestParseBytesWithRefs(t *testing.T) {
 	require.Equal(t, 0, len(result.BinaryTypes))
 	require.Equal(t, 0, len(result.ObjectTypes))
 
-	personName, exist := result.ComplexTypes["Name"]
+	exist := p.HasTypeWithNameInList("Name", result.ComplexTypes)
 	require.True(t, exist, "PersonName doesn't exist")
-	fmt.Println(personName)
 
-	personContact, exist := result.ComplexTypes["PersonContact"]
+	exist = p.HasTypeWithNameInList("PersonContact", result.ComplexTypes)
 	require.True(t, exist, "PersonContact doesn't exist")
-	fmt.Println(personContact)
 
-	personContactAddress, exist := result.ComplexTypes["PersonContactAddress"]
+	exist = p.HasTypeWithNameInList("PersonContactAddress", result.ComplexTypes)
 	require.True(t, exist, "PersonContactAddress doesn't exist")
-	fmt.Println(personContactAddress)
 
-	personRoles, exist := result.StringEnums["PersonRolesItems"]
+	exist = p.HasTypeWithNameInList("PersonRolesItems", result.StringEnums)
 	require.True(t, exist, "PersonRolesItems doesn't exist")
-	fmt.Println(personRoles)
 
-	person, exist := result.ComplexTypes["Person"]
+	obj, exist := p.GetTypeByNameFromList("Person", result.ComplexTypes)
 	require.True(t, exist, "Person doesn't exist")
 	found := false
+	person, isOk := obj.(types.ComplexType)
+	require.True(t, isOk, "Person isn't a complex type")
 	for _, p := range person.Properties {
 		if p.Name == "name" {
 			found = true

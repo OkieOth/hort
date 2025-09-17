@@ -23,33 +23,13 @@ enum PersonRolesItems {
 	VIEWER = 3;
 }
 
-message Person {
+message PersonName {
 
-	int32 age = 1;
+	string first = 1;
 
-	PersonContact contact = 2;
+	string middle = 2;
 
-	repeated PersonRolesItems roles = 3;
-
-	bool isActive = 4;
-
-	google.protobuf.Timestamp createdAt = 5;
-
-	PersonIEnum iEnum = 6;
-
-	string id = 7;
-
-	PersonName name = 8;
-
-}
-
-message PersonContact {
-
-	string email = 1;
-
-	string phone = 2;
-
-	PersonContactAddress address = 3;
+	string last = 3;
 
 }
 
@@ -65,15 +45,38 @@ message PersonContactAddress {
 
 }
 
-message PersonName {
+message PersonContact {
 
-	string first = 1;
+	string email = 1;
 
-	string middle = 2;
+	string phone = 2;
 
-	string last = 3;
+	PersonContactAddress address = 3;
 
 }
+
+message Person {
+
+	string id = 1;
+
+	PersonName name = 2;
+
+	int32 age = 3;
+
+	PersonContact contact = 4;
+
+	repeated PersonRolesItems roles = 5;
+
+	bool isActive = 6;
+
+	google.protobuf.Timestamp createdAt = 7;
+
+	PersonIEnum iEnum = 8;
+
+}
+
+
+
 
 
 
@@ -122,9 +125,6 @@ service PersonService {
   rpc DeletePerson(DeletePersonRequest) returns (DeletePersonResponse);
   rpc ListPersons(ListPersonsRequest) returns (ListPersonsResponse);
 }
-
-
-
 
 
 

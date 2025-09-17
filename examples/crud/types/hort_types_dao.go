@@ -2,9 +2,9 @@ package types
 
 type DaoPersonName struct {
   Id_ int64 // Storage Primary Key
+  First string
   Middle string
   Last string
-  First string
 }
 
 type DaoPersonContactAddress struct {

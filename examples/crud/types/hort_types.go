@@ -19,35 +19,13 @@ const (
 	PersonRolesItemsviewer PersonRolesItems = "viewer"
 )
 
-type Person struct {
+type PersonName struct {
 
-  Id_ int64 // Storage Primary Key
+	First string
 
-	CreatedAt time.Time // DateTime
+	Middle string
 
-	IEnum PersonIEnum
-
-	Id string // UUID
-
-	Name PersonName
-
-	Age int
-
-	Contact PersonContact
-
-	Roles []PersonRolesItems
-
-	IsActive bool
-
-}
-
-type PersonContact struct {
-
-	Email string
-
-	Phone string
-
-	Address PersonContactAddress
+	Last string
 
 }
 
@@ -63,13 +41,35 @@ type PersonContactAddress struct {
 
 }
 
-type PersonName struct {
+type PersonContact struct {
 
-	First string
+	Email string
 
-	Middle string
+	Phone string
 
-	Last string
+	Address PersonContactAddress
+
+}
+
+type Person struct {
+
+  Id_ int64 // Storage Primary Key
+
+	Id string // UUID
+
+	Name PersonName
+
+	Age int
+
+	Contact PersonContact
+
+	Roles []PersonRolesItems
+
+	IsActive bool
+
+	CreatedAt time.Time // DateTime
+
+	IEnum PersonIEnum
 
 }
 
